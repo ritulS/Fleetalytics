@@ -1,0 +1,22 @@
+{
+  "name": "fleetalytics",
+  "version": "0.0.1",
+  "description": "all services for fleetalytics",
+  "main": "services/backend.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ritulS/fleetalytics.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ritulS/fleetalytics/issues"
+  },
+  "homepage": "https://github.com/ritulS/fleetalytics#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
