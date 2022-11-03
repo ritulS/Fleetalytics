@@ -1,0 +1,16 @@
+{
+  "name": "fleetalytics",
+  "version": "0.0.1",
+  "main": "none",
+  "repository": "git@github.com:ritulS/fleetalytics.git",
+  "author": "AlfredDaimari <alfreddaimari77@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@types/node": "^18.11.9",
+    "express": "^4.18.2",
+    "typescript": "^4.8.4"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.1"
+  }
+}
