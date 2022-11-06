@@ -1,7 +1,7 @@
 import time
 import pika
 import sys, os
-import mysql.connector
+#import mysql.connector
 
 
 def main():

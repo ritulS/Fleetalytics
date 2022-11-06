@@ -1,0 +1,4 @@
+1) Create MySQL database
+2) figure out how to make the database persistent
+3) Rabbit mq container to check queue working
+4)  -----
