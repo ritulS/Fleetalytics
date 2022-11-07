@@ -13,8 +13,8 @@ RUN npx yarn install
 RUN mkdir -p ~/cont/nodeserver/public
 
 # source code
-COPY services/backend.ts ./
-COPY dist/index.html ./public/
+COPY backend.ts ./
+COPY public/index.html ./public/
 
 EXPOSE 8080
 
