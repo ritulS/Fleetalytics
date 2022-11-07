@@ -2,3 +2,15 @@
 2) figure out how to make the database persistent
 3) Rabbit mq container to check queue working
 4)  -----
+
+
+ docker run -d \
+	--name some-postgres \
+	-e POSTGRES_PASSWORD=mysecretpassword \
+	-e PGDATA=/var/lib/postgresql/data/pgdata \
+	-v /custom/mount:/var/lib/postgresql/data \
+	postgres
+
+
+
+    
