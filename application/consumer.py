@@ -13,7 +13,7 @@ def main():
     def callback(ch, method, properties, body):
         print(" [x] Received %r" % body)
 
-    channel.basic_consume(queue='hello',
+    channel.basic_consume(queue='telematics',
                         auto_ack=True,
                         on_message_callback=callback)
 
