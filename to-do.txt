@@ -1,7 +1,11 @@
-1) Create MySQL database
-2) figure out how to make the database persistent
-3) Rabbit mq container to check queue working
-4)  -----
+Container we need-
+1) dashboard application container (node)
+2) postgres DB container (producer)
+3) postgres DB container (consumer)
+4) AMQ broker container (RabbitMQ)
+5) Cache?
+
+
 
 
  docker run -d \

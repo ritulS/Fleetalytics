@@ -9,3 +9,5 @@ services:
       POSTGRES_DB: mydb
     volumes:
        - ./data:/var/lib/postgresql/data
+
+  
