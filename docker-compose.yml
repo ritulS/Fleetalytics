@@ -10,4 +10,11 @@ services:
     volumes:
        - ./data:/var/lib/postgresql/data
 
-  
+  rabbitmq3:
+    container_name: "rabbitmq"
+    image: rabbitmq:3.8-management-alpine
+    ports: 
+        # AMQP protocol port
+        - '5672:5672'
+        # Rabbit HTTP Management UI
+        - '15672:15672'

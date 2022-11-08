@@ -6,6 +6,13 @@ Container we need-
 5) Cache?
 
 
+Plans:
+Producer runs on a separate vm
+rabbit, consumer,db and dashboard runs on the aws vm given
+Producer send to rabbit container
+Communication through docker network: rabbit => consumer => db => dashboard
+
+
 
 
  docker run -d \
