@@ -1,4 +1,4 @@
-Container we need-
+Containers-
 1) dashboard application container (node)
 2) postgres DB container (producer)
 3) postgres DB container (consumer)
