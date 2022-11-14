@@ -25,16 +25,16 @@ interface VehicleSearchModalListProps {
 
 export function VehicleSearchBtn() {
   return (
-    <div>
+    <>
       <button
-        className="btn btn-primary"
+        className="btn btn-outline-success"
         type="button"
         data-bs-toggle="modal"
         data-bs-target="#vehicleSearchModal"
       >
-        Search for Vehicle
+        search
       </button>
-    </div>
+    </>
   );
 }
 
@@ -61,7 +61,7 @@ function VehicleSearchModalInput(props: { setSearch: Function }) {
 function VehicleSearchModalList(props: VehicleSearchModalListProps) {
   const id_tsx = props.carList.map((value) => {
     return (
-      <div id={value.id} onClick={() => props.getInfo()}>
+      <div key={value.id} onClick={() => props.getInfo()}>
         <p className="p-2 hover:cursor-pointer">{value.id}</p>
       </div>
     );
@@ -184,6 +184,9 @@ export function NavBar(props: NavBarProps) {
             </a>
           </li>
         </ul>
+        <form className="d-flex" role="search">
+          <VehicleSearchBtn />
+        </form>
       </div>
     </div>
   );

@@ -4,7 +4,7 @@ import { NavBar, VehicleSearchBtn, VehicleSearchModal } from "./components";
 function App() {
   return (
     <>
-      <NavBar type="analytics" /> <VehicleSearchBtn />
+      <NavBar type="analytics" /> 
       <VehicleSearchModal />
     </>
   );

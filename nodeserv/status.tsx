@@ -5,7 +5,6 @@ function App() {
   return (
     <>
       <NavBar type="status" />
-      <VehicleSearchBtn />
       <VehicleSearchModal />
     </>
   );
