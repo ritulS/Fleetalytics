@@ -1,5 +1,5 @@
 import { createRoot } from "react-dom/client";
-import { NavBar, VehicleSearchBtn, VehicleSearchModal } from "./components";
+import { NavBar, VehicleSearchModal } from "./components";
 
 function App() {
   return (

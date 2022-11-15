@@ -5,6 +5,12 @@
   "repository": "git@github.com:ritulS/fleetalytics.git",
   "author": "AlfredDaimari <alfreddaimari77@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "dev": "npx ts-node backend.ts",
+    "watch-backend": "npx nodemon -w backend.ts -x \"npx ts-node backend.ts\" -e \"ts\"",
+    "watch-frontend": "npx nodemon -w index.tsx -w components.tsx -w status.tsx -w analytics.tsx -w styles.css -e \"tsx,css\" -x \"npx webpack build\"",
+    "build": "npx webpack build"
+  },
   "dependencies": {
     "express": "^4.18.2",
     "fuzzy-search": "^3.2.1",
