@@ -1,5 +1,5 @@
 import { createRoot } from "react-dom/client";
-import react, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { NavBar, VehicleSearchModal } from "./components";
 import Cookies from "js-cookie";
 import "./styles.css";
@@ -11,12 +11,16 @@ if (cid == undefined) {
 }
 
 // fake function for testing
-function fake_get_gps_location(id: string) {
+function fake_get_gps_location(carID: string) {
   console.log("fake function for get gps info has been clicked");
 }
 
 function Home() {
   const [carID, update_carid_] = useState(cid);
+
+  const update_carID = (carID: string) => {
+    update_carid_(carID);
+  };
 
   return (
     <>

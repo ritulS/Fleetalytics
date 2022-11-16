@@ -14,7 +14,6 @@ interface VehicleStatusCompProps {
   };
 }
 
-
 // get previous car id set
 var cid = Cookies.get("carID");
 if (cid == undefined) {
