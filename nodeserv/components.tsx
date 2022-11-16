@@ -23,6 +23,21 @@ interface VehicleSearchModalListProps {
   getInfo: Function;
 }
 
+interface VehicleSearchModalProps {
+  update_carID: Function;
+}
+
+interface VehicleStatusCompProps {
+  info: {
+    cid: string;
+    fuel: number;
+    speed: number;
+    location: [number, number];
+    avg_distance: number;
+    avg_speed: number;
+  };
+}
+
 export function VehicleSearchBtn() {
   return (
     <>
@@ -61,7 +76,7 @@ function VehicleSearchModalInput(props: { setSearch: Function }) {
 function VehicleSearchModalList(props: VehicleSearchModalListProps) {
   const id_tsx = props.carList.map((value) => {
     return (
-      <div key={value.id} onClick={() => props.getInfo()}>
+      <div key={value.id} onClick={() => props.getInfo(value.id)}>
         <p className="p-2 hover:cursor-pointer">{value.id}</p>
       </div>
     );
@@ -70,7 +85,7 @@ function VehicleSearchModalList(props: VehicleSearchModalListProps) {
   return <div>{id_tsx}</div>;
 }
 
-export function VehicleSearchModal() {
+export function VehicleSearchModal(props: VehicleSearchModalProps) {
   const [search, setSearch] = useState("check");
   const [carList, updateCarList] = useState([]);
 
@@ -80,9 +95,6 @@ export function VehicleSearchModal() {
       .then((resp) => resp.json())
       .then((resp: { carList: [] }) => updateCarList(resp.carList));
   }, [search]);
-
-  const fake_get_info = () =>
-    console.log("fake get info button has been clicked");
 
   return (
     <div
@@ -110,14 +122,14 @@ export function VehicleSearchModal() {
             <VehicleSearchModalInput setSearch={setSearch} />
             <VehicleSearchModalList
               carList={carList as unknown as [carIdInterface]}
-              getInfo={fake_get_info}
+              getInfo={props.update_carID}
             />
           </div>
           <div className="modal-footer">
             <button
               type="submit"
               className="btn btn-primary"
-              onClick={fake_get_info}
+              onClick={() => props.update_carID(search)}
             >
               info
             </button>
@@ -133,6 +145,22 @@ export function VehicleSearchModal() {
         </div>
       </div>
     </div>
+  );
+}
+
+export function VehicleStatusComp(props: VehicleStatusCompProps) {
+  return (
+    <>
+      <div>
+        <h1>CAR STATUS</h1>
+        <p>{props.info.cid}</p>
+        <p>{props.info.fuel}</p>
+        <p>{props.info.speed}</p>
+        <p>{props.info.location[0] + "," + props.info.location[1]}</p>
+        <p>{props.info.avg_distance}</p>
+        <p>{props.info.avg_speed}</p>
+      </div>
+    </>
   );
 }
 
