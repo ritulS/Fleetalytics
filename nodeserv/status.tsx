@@ -1,18 +1,7 @@
 import { createRoot } from "react-dom/client";
-import react, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { NavBar, VehicleSearchModal, VehicleStatusComp } from "./components";
 import Cookies from "js-cookie";
-
-interface VehicleStatusCompProps {
-  info: {
-    cid: string;
-    fuel: number;
-    speed: number;
-    location: [number, number];
-    avg_distance: number;
-    avg_speed: number;
-  };
-}
 
 // get previous car id set
 var cid = Cookies.get("carID");

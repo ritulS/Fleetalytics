@@ -38,17 +38,229 @@ interface VehicleStatusCompProps {
   };
 }
 
-export function VehicleSearchBtn() {
+function VehicleSearchBtn() {
   return (
     <>
       <button
-        className="btn btn-outline-success"
+        className="ml-2 btn btn-outline-success"
         type="button"
         data-bs-toggle="modal"
         data-bs-target="#vehicleSearchModal"
       >
         search
       </button>
+    </>
+  );
+}
+
+function AnalyticsQueryBtn() {
+  return (
+    <>
+      <button
+        className="btn btn-outline-primary"
+        type="button"
+        data-bs-toggle="modal"
+        data-bs-target="#analyticsQueryModal"
+      >
+        query
+      </button>
+    </>
+  );
+}
+
+export function AnalyticsQueryModal(props: { updateQueryParams: Function }) {
+  const [queryParams, updateQueryParams_] = useState({
+    param: "speed",
+    time: "day",
+    plot: "line",
+  });
+
+  const updateQueryParams = (e: React.FormEvent<HTMLButtonElement>) =>
+    props.updateQueryParams(queryParams);
+
+  const updateParamVariable = (paramType: "speed" | "distance" | "fuel") =>
+    updateQueryParams_({ ...queryParams, param: paramType });
+  const updateTimeVariable = (timeType: "12-hrs" | "day" | "week") =>
+    updateQueryParams_({ ...queryParams, time: timeType });
+  const updatePlotVariable = (plotType: "line" | "bar") =>
+    updateQueryParams_({ ...queryParams, plot: plotType });
+
+  return (
+    <>
+      <div
+        className="modal fade"
+        id="analyticsQueryModal"
+        tabIndex={-1}
+        aria-labelledby="analyticsQueryModalLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h1 className="modal-title fs-5" id="analyticsQueryModalLabel">
+                set analytics query parameters?
+              </h1>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body">
+              <div
+                className="btn-group"
+                role="group"
+                aria-label="Basic radio toggle button group"
+              >
+                <input
+                  type="radio"
+                  className="btn-check"
+                  name="paramradio"
+                  id="paramradio1"
+                  autoComplete="off"
+                  checked={queryParams.param == "speed" ? true : false}
+                  onClick={() => updateParamVariable("speed")}
+                ></input>
+                <label
+                  className="btn btn-outline-primary"
+                  htmlFor="paramradio1"
+                >
+                  speed
+                </label>
+
+                <input
+                  type="radio"
+                  className="btn-check"
+                  name="paramradio"
+                  id="paramradio2"
+                  autoComplete="off"
+                  onClick={() => updateParamVariable("fuel")}
+                  checked={queryParams.param == "fuel" ? true : false}
+                ></input>
+                <label
+                  className="btn btn-outline-primary"
+                  htmlFor="paramradio2"
+                >
+                  fuel
+                </label>
+
+                <input
+                  type="radio"
+                  className="btn-check"
+                  name="paramradio"
+                  id="paramradio3"
+                  autoComplete="off"
+                  onClick={() => updateParamVariable("distance")}
+                  checked={queryParams.param == "distance" ? true : false}
+                ></input>
+                <label
+                  className="btn btn-outline-primary"
+                  htmlFor="paramradio3"
+                >
+                  distance
+                </label>
+              </div>
+              <br></br>
+              <div
+                className="btn-group mt-2"
+                role="group"
+                aria-label="Basic radio toggle button group"
+              >
+                <input
+                  type="radio"
+                  className="btn-check"
+                  name="timeradio"
+                  id="timeradio1"
+                  autoComplete="off"
+                  checked={queryParams.time == "12-hrs" ? true : false}
+                  onClick={() => updateTimeVariable("12-hrs")}
+                ></input>
+                <label className="btn btn-outline-primary" htmlFor="timeradio1">
+                  12-hrs
+                </label>
+
+                <input
+                  type="radio"
+                  className="btn-check"
+                  name="timeradio"
+                  id="timeradio2"
+                  autoComplete="off"
+                  checked={queryParams.time == "day" ? true : false}
+                  onClick={() => updateTimeVariable("day")}
+                ></input>
+                <label className="btn btn-outline-primary" htmlFor="timeradio2">
+                  day
+                </label>
+
+                <input
+                  type="radio"
+                  className="btn-check"
+                  name="timeradio"
+                  id="timeradio3"
+                  autoComplete="off"
+                  checked={queryParams.time == "week" ? true : false}
+                  onClick={() => updateTimeVariable("week")}
+                ></input>
+                <label className="btn btn-outline-primary" htmlFor="timeradio3">
+                  week
+                </label>
+              </div>
+              <br></br>
+
+              <div
+                className="btn-group mt-2"
+                role="group"
+                aria-label="Basic radio toggle button group"
+              >
+                <input
+                  type="radio"
+                  className="btn-check"
+                  name="plotradio"
+                  id="plotradio1"
+                  autoComplete="off"
+                  checked={queryParams.plot == "line" ? true : false}
+                  onClick={() => updatePlotVariable("line")}
+                ></input>
+                <label className="btn btn-outline-primary" htmlFor="plotradio1">
+                  line
+                </label>
+
+                <input
+                  type="radio"
+                  className="btn-check"
+                  name="plotradio"
+                  id="plotradio2"
+                  autoComplete="off"
+                  checked={queryParams.plot == "bar" ? true : false}
+                  onClick={() => updatePlotVariable("bar")}
+                ></input>
+                <label className="btn btn-outline-primary" htmlFor="plotradio2">
+                  bar
+                </label>
+              </div>
+            </div>
+
+            <div className="modal-footer">
+              <button
+                type="submit"
+                className="btn btn-primary"
+                onClick={updateQueryParams}
+              >
+                query
+              </button>
+
+              <button
+                type="button"
+                className="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                exit
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   );
 }
@@ -150,17 +362,22 @@ export function VehicleSearchModal(props: VehicleSearchModalProps) {
 
 export function VehicleStatusComp(props: VehicleStatusCompProps) {
   return (
-    <>
-      <div>
-        <h1>CAR STATUS</h1>
-        <p>{props.info.cid}</p>
-        <p>{props.info.fuel}</p>
-        <p>{props.info.speed}</p>
-        <p>{props.info.location[0] + "," + props.info.location[1]}</p>
-        <p>{props.info.avg_distance}</p>
-        <p>{props.info.avg_speed}</p>
+    <div className="w-full relative h-screen">
+      <div className="m-0 w-1/2 absolute left-1/4 top-1/4 text-green-600 bg-neutral-700 rounded-md p-4">
+        <h1 className="text-center text-green-500 underline underline-offset-4">
+          car status
+        </h1>
+        <h3>car_id: {props.info.cid}</h3>
+        <h3>fuel: {props.info.fuel}</h3>
+        <h3>current speed: {props.info.speed}</h3>
+        <h3>
+          current location:{" "}
+          {props.info.location[0] + "," + props.info.location[1]}
+        </h3>
+        <h3>avg distance covered: {props.info.avg_distance}</h3>
+        <h3>avg speed: {props.info.avg_speed}</h3>
       </div>
-    </>
+    </div>
   );
 }
 
@@ -213,6 +430,7 @@ export function NavBar(props: NavBarProps) {
           </li>
         </ul>
         <form className="d-flex" role="search">
+          {isAnalytics && <AnalyticsQueryBtn />}
           <VehicleSearchBtn />
         </form>
       </div>
