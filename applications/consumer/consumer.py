@@ -6,7 +6,7 @@ import sys, os
 
 def main():
     #make connection with producer
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host='10.2.33.100'))
 
     #setup channel with producer
     channel = connection.channel()
