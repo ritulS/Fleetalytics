@@ -10,11 +10,10 @@ COPY yarn.lock ./
 
 RUN npm install yarn
 RUN npx yarn install
-RUN mkdir -p ~/cont/nodeserver/public
 
 # source code
 COPY backend.ts ./
-COPY public/index.html ./public/
+COPY public ./
 
 EXPOSE 8080
 
