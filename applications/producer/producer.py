@@ -1,26 +1,27 @@
-# import time
-# import json
-# import pika
+# VM  ip 13.234.117.189
 
-# connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
-# channel = connection.channel()
+import time
+import json
+import pika
 
-# channel.queue_declare(queue='telematics')
+connection = pika.BlockingConnection(pika.ConnectionParameters(host='13.234.117.189'))
+channel = connection.channel()
 
-# channel.basic_publish(exchange='',
-#                         routing_key='telematics',
-#                         body='Vin:1234')
+channel.exchange_declare(exchange='logs', exchange_type='fanout')
+
+
 
 # print("Vin number sent")
 # connection.close()
 
 import psycopg2
 
+
 # Connect with local postgres DB
 try: 
-    print('before conn')
+    #print('before conn')
     conn = psycopg2.connect("dbname='bus_data' user='postgres' password='postgres' host='localhost'")
-    print('after conn')
+    #print('after conn')
     cursor = conn.cursor()
     psql_select_query = "SELECT * FROM bus_table"
 
@@ -31,15 +32,19 @@ try:
     i = 0
     for row in bus_records:
         i += 1
-        print(row)
-        if i > 5:
-            break
-    
+        message = json.dumps(row,default=str)
+        channel.basic_publish(exchange='logs',
+                        routing_key='',
+                        body=message)
+       
+    connection.close()
+            
     
 
 
 except (Exception, psycopg2.Error) as error:
-    print("Error while fetching data from DB 1")
     print(error)
+    print("Error while fetching data from DB 1")
+    
 
 

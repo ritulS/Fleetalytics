@@ -5,15 +5,25 @@ import sys, os
 
 
 def main():
+    #make connection with producer
     connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+
+    #setup channel with producer
     channel = connection.channel()
 
-    channel.queue_declare(queue='telematics')
+    #mention exchange to be used
+    channel.exchange_declare(exchange='logs', exchange_type='fanout')
+
+    # Bind to queue automatically
+    result = channel.queue_declare(queue='', exclusive=True)
+    queue_name = result.method.queue
+    channel.queue_bind(exchange='logs', queue=queue_name)
+
 
     def callback(ch, method, properties, body):
         print(" [x] Received %r" % body)
 
-    channel.basic_consume(queue='telematics',
+    channel.basic_consume(queue=queue_name,
                         auto_ack=True,
                         on_message_callback=callback)
 
