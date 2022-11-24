@@ -7,12 +7,14 @@ MAINTAINER AlfredDaimari
 
 COPY package.json ./
 COPY yarn.lock ./
+COPY tsconfig.json ./
 
 RUN npm install yarn
 RUN npx yarn install
 
 # source code
 COPY backend.ts ./
+COPY cars.json ./
 COPY public ./
 
 EXPOSE 8080
