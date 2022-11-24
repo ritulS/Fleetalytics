@@ -362,22 +362,20 @@ export function VehicleSearchModal(props: VehicleSearchModalProps) {
 
 export function VehicleStatusComp(props: VehicleStatusCompProps) {
   return (
-    <div className="w-full relative h-screen">
-      <div className="m-0 w-1/2 absolute left-1/4 top-1/4 text-green-600 bg-neutral-700 rounded-md p-4">
-        <h1 className="text-center text-green-500 underline underline-offset-4">
+      <div className="w-full rounded-md p-4 text-zinc-50">
+        <h3 className="text-center text-green-500 underline underline-offset-4">
           car status
-        </h1>
-        <h3>car_id: {props.info.cid}</h3>
-        <h3>fuel: {props.info.fuel}</h3>
-        <h3>current speed: {props.info.speed}</h3>
-        <h3>
+        </h3>
+        <h4>car_id: {props.info.cid}</h4>
+        <h4>fuel: {props.info.fuel}</h4>
+        <h4>current speed: {props.info.speed}</h4>
+        <h4>
           current location:{" "}
           {props.info.location[0] + "," + props.info.location[1]}
-        </h3>
-        <h3>avg distance covered: {props.info.avg_distance}</h3>
-        <h3>avg speed: {props.info.avg_speed}</h3>
+        </h4>
+        <h4>avg distance covered: {props.info.avg_distance}</h4>
+        <h4>avg speed: {props.info.avg_speed}</h4>
       </div>
-    </div>
   );
 }
 
