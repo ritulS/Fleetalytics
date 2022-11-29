@@ -36,7 +36,6 @@ def rbmq_callback(ch, method, properties, body: str):
 def connect_to_rbmq_broker(ip: str):
     #make connection with producer
     connection = pika.BlockingConnection(pika.ConnectionParameters(host=ip))
-
     #setup channel with producer
     channel = connection.channel()
 
