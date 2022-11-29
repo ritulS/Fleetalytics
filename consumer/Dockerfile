@@ -1,12 +1,13 @@
 FROM python:3
 
-
-RUN apt update
-RUN apt install python3 -y
-#RUN pip install -r requirements.txt
-
-WORKDIR /usr/app/src
+WORKDIR /consumer
 
 COPY ./consumer.py ./
+COPY ./poetry.lock ./
+COPY ./poetry.toml ./
+COPY ./pyproject.toml ./
 
-CMD [ "python3", "./consumer.py" ]
+RUN pip install poetry
+RUN poetry install 
+
+CMD [ "poetry", "run", "python", "consumer.py"]

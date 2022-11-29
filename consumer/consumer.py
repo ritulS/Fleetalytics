@@ -1,35 +1,69 @@
-import time
 import pika
-import sys, os
+import redis
 #import mysql.connector
 
+REDIS: redis.Redis
 
-def main():
+
+def connect_to_redis_cache(host: str, port: int, password: str):
+    global REDIS
+    REDIS = redis.Redis(host=host, port=port, password=password)
+
+
+def push_to_cache(id: str, value: str):
+    global REDIS
+    REDIS.set(id, value)
+    print(f"set value {id} with {value}")
+
+
+def push_to_db(data):
+    pass
+
+
+def rbmq_callback(ch, method, properties, body: str):
+    """
+    Callback function for rabbitmq
+
+    body:str - sent in the format "id:'{}'" where '{}' is in JSON format
+    """
+    print(" [x] Received %r" % body)
+    body_arr = body.split(':')
+    id = body_arr[0]
+    value = body_arr[1]
+    push_to_cache(id, value)
+
+
+def connect_to_rbmq_broker(ip: str):
     #make connection with producer
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host='10.2.33.100'))
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host=ip))
 
     #setup channel with producer
     channel = connection.channel()
 
-    #mention exchange to be used
+    #declaring an exchange
     channel.exchange_declare(exchange='logs', exchange_type='fanout')
 
-    # Bind to queue automatically
-    result = channel.queue_declare(queue='', exclusive=True)
-    queue_name = result.method.queue
-    channel.queue_bind(exchange='logs', queue=queue_name)
+    # creating q queue
+    queue = channel.queue_declare(queue='car_logs_queue', exclusive=True)
+    car_logs_queue = queue.method.queue
 
+    # binding our queue to the exchange
+    channel.queue_bind(exchange='logs', queue=car_logs_queue)
 
-    def callback(ch, method, properties, body):
-        print(" [x] Received %r" % body)
-
-    channel.basic_consume(queue=queue_name,
-                        auto_ack=True,
-                        on_message_callback=callback)
+    channel.basic_consume(queue=car_logs_queue,
+                          auto_ack=True,
+                          on_message_callback=rbmq_callback)
 
     print('Waiting for messages')
 
     channel.start_consuming()
+
+
+def main():
+    #TODO - write host, port, password
+    connect_to_redis_cache()
+    connect_to_rbmq_broker("localhost")
+
 
 if __name__ == '__main__':
     try:
@@ -37,6 +71,6 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         print('Interrupted')
         try:
-            sys.exit(0)
+            exit(0)
         except SystemExit:
-            os.exit(0)
+            exit(0)

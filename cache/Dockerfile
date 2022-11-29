@@ -1,7 +1,7 @@
 # dockerfile for redis server
 
 FROM redis:7.0.5-alpine
-WORKDIR ~/cont/rediscache
+WORKDIR /rediscache
 
 MAINTAINER AlfredDaimari
 

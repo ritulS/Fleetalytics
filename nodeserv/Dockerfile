@@ -1,7 +1,7 @@
 # dockerfile for node server
 
 FROM node:16-alpine
-WORKDIR ~/cont/nodeserver
+WORKDIR /nodeserver
 
 MAINTAINER AlfredDaimari
 
