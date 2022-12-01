@@ -12,11 +12,14 @@ COPY tsconfig.json ./
 RUN npm install yarn
 RUN npx yarn install
 
+RUN mkdir public
+
 # source code
 COPY backend.ts ./
 COPY cars.json ./
-COPY public ./
+COPY public ./public/
 
 EXPOSE 8080
+EXPOSE 6379
 
 CMD ["npx", "ts-node", "backend.ts"]

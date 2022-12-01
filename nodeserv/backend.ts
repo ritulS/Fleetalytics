@@ -15,7 +15,7 @@ const searcher = new FuzzySearch(CARS, ["id"], {
 // setting up redis connection
 const redisclient = createClient({
   socket: {
-    host: "127.0.0.1",
+    host: "redis.cache",
     port: 6379,
   },
   password: "hello",
