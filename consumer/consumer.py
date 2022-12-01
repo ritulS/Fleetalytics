@@ -30,7 +30,7 @@ def rbmq_callback(ch, method, properties, body: str):
     body_arr = body.split(':')
     id = body_arr[0]
     value = body_arr[1]
-    push_to_cache(id, value)
+    #push_to_cache(id, value)
 
 
 def connect_to_rbmq_broker(ip: str):
@@ -60,8 +60,8 @@ def connect_to_rbmq_broker(ip: str):
 
 def main():
     #TODO - write host, port, password
-    connect_to_redis_cache()
-    connect_to_rbmq_broker("localhost")
+    #connect_to_redis_cache()
+    connect_to_rbmq_broker("ip-172-26-1-243")
 
 
 if __name__ == '__main__':
