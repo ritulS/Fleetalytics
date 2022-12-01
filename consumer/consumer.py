@@ -61,7 +61,7 @@ def connect_to_rbmq_broker(ip: str):
 def main():
     #TODO - write host, port, password
     #connect_to_redis_cache()
-    connect_to_rbmq_broker("rabbitmq")
+    connect_to_rbmq_broker("ip-172-26-1-243")
 
 
 if __name__ == '__main__':
