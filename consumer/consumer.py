@@ -38,7 +38,7 @@ def connect_to_rbmq_broker(ip: str):
     connection = pika.BlockingConnection(pika.ConnectionParameters(host=ip))
     #setup channel with producer
     channel = connection.channel()
-
+    print("Connection with RMQP established")
     #declaring an exchange
     channel.exchange_declare(exchange='logs', exchange_type='fanout')
 

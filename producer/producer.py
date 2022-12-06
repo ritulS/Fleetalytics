@@ -4,7 +4,7 @@ import time
 import json
 import pika
 
-connection = pika.BlockingConnection(pika.ConnectionParameters(host='ip-172-26-1-243',port=5672))
+connection = pika.BlockingConnection(pika.ConnectionParameters(host='172.26.1.243', port=5672, socket_timeout=2))
 channel = connection.channel()
 
 channel.exchange_declare(exchange='logs', exchange_type='fanout')
