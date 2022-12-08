@@ -1,3 +1,5 @@
 consumer/.venv
 nodeserv/node_modules
 nodserv/yarn-error.log
+fuzzy_searcher/node_modules
+fuzz_searcher/yarn-error.log

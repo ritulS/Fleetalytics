@@ -1,7 +1,6 @@
-# dockerfile for node server
-
+# dockerfile for node fuzzy search server
 FROM node:16-alpine
-WORKDIR /nodeserver
+WORKDIR /nodefuzzysearcher
 
 MAINTAINER AlfredDaimari
 
@@ -10,15 +9,11 @@ COPY yarn.lock ./
 COPY tsconfig.json ./
 
 RUN npm install yarn
-RUN npx yarn install
+RUN npx yarn install 
 
-RUN mkdir public
-
-# source code
 COPY backend.ts ./
-COPY public ./public/
+COPY cars.json ./
 
-EXPOSE 8080
-EXPOSE 6379
+EXPOSE 8081
 
 CMD ["npx", "ts-node", "backend.ts"]

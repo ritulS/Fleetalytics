@@ -1,16 +1,7 @@
 import express, { Express, Request, Response } from "express";
-import FuzzySearch from "fuzzy-search";
-import cars_json from "./cars.json";
 import { createClient } from "redis";
 
 // backed to send car data to the frontend
-
-const CARS = cars_json["cars"];
-
-const searcher = new FuzzySearch(CARS, ["id"], {
-  caseSensitive: false,
-  sort: true,
-});
 
 // setting up redis connection
 const redisclient = createClient({
@@ -67,16 +58,6 @@ app.get(
     });
   }
 );
-
-// fuzzy searching for the car id
-app.get("/search", (req: Request, res: Response) => {
-  const searchTerm: string = req.query.q as string;
-  if (searchTerm == "check") {
-    res.json({ carList: [] });
-  } else {
-    res.json({ carList: searcher.search(searchTerm).splice(0, 4) });
-  }
-});
 
 app.listen(8080, () => {
   console.log("server is up and running on port 8080");
