@@ -1,5 +1,6 @@
 import express, { Express, Request, Response } from "express";
 import { createClient } from "redis";
+import http from "http";
 
 // backed to send car data to the frontend
 
@@ -58,6 +59,25 @@ app.get(
     });
   }
 );
+
+app.get("/search", (req: Request, res: Response) => {
+  const searchTerm: string = req.query.q as string;
+
+  if (searchTerm == "check") {
+    res.json({ carList: [] });
+  } else {
+    const options = {
+      port: 8081,
+      host: "node.fuzz",
+      method: "GET",
+      path: `/search?q=${searchTerm}`,
+    };
+    const req = http.request(options);
+    req.end();
+
+    req.on("response", (response) => response.pipe(res));
+  }
+});
 
 app.listen(8080, () => {
   console.log("server is up and running on port 8080");
