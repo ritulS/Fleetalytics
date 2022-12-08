@@ -12,7 +12,6 @@ channel.exchange_declare(exchange='logs', exchange_type='fanout')
 
 
 # print("Vin number sent")
-# connection.close()
 
 import psycopg2
 
@@ -30,6 +29,7 @@ try:
 
     bus_records = cursor.fetchall()
     i = 0
+
     for row in bus_records:
         i += 1
         message = json.dumps(row,default=str)
