@@ -18,3 +18,28 @@ services:
         - '5672:5672'
         # Rabbit HTTP Management UI
         - '15672:15672'
+  nodeserv:
+    image: nodeserv
+    ports:
+      - "8080"
+    restart: always
+    networks:
+      - fbridge
+  
+  node.fuzz:
+    image: nodefuzz
+    restart: always
+    networks:
+      - fbridge
+
+  redis.cache:
+    image: rediscache
+    networks:
+      - fbridge
+
+  consumer:
+    image: pyconsumer
+    restart: always
+    networks:
+      - fbridge
+
