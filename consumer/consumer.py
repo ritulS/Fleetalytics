@@ -1,5 +1,6 @@
 import pika
 import redis
+import json
 #import mysql.connector
 
 REDIS: redis.Redis
@@ -25,11 +26,22 @@ def rbmq_callback(ch, method, properties, body: str):
     Callback function for rabbitmq
 
     body:str - sent in the format "id:'{}'" where '{}' is in JSON format
+    ["2019-01-25", "08:50:39", "C51623                                            ", 371.0, "-22.883270", "-43.342560", 37.0]
     """
     print(" [x] Received %r" % body)
     body_arr = body.split(':')
     id = body_arr[0]
     value = body_arr[1]
+    # convert json to py list
+    data = json.loads(body)
+
+    
+    # Calculate distance
+
+
+    # 
+    
+    #push_to_db(body)                                                                      
     #push_to_cache(id, value)
 
 
