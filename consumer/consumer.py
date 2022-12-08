@@ -10,8 +10,21 @@ def connect_to_redis_cache(host: str, port: int, password: str):
     global REDIS
     REDIS = redis.Redis(host=host, port=port, password=password)
 
+def get_from_cache(id:str):
+    '''
+    Get value from cache 
+    - should be in JSON format
+    '''
+    global REDIS
+    return REDIS.get(id)
 
 def push_to_cache(id: str, value: str):
+    '''
+    Push value to cache 
+        Parameters:
+            id: DUH!?
+            value: must be in JSON format
+    '''
     global REDIS
     REDIS.set(id, value)
     print(f"set value {id} with {value}")
@@ -20,14 +33,30 @@ def push_to_cache(id: str, value: str):
 def push_to_db(data):
     pass
 
+def calculate_distance(cur_data:str)->int:
+    '''
+    Calculate the distance using coordinates
+    '''
+    return 0
 
 def rbmq_callback(ch, method, properties, body: str):
-    """
+    '''
     Callback function for rabbitmq
 
     body:str - sent in the format "id:'{}'" where '{}' is in JSON format
-    ["2019-01-25", "08:50:39", "C51623                                            ", 371.0, "-22.883270", "-43.342560", 37.0]
-    """
+    ["2019-01-25", "08:50:39", "C51623", 371.0, "-22.883270", "-43.342560", 37.0]
+
+    Cache format
+
+    carStatus:{
+        cid: cid as string,
+        fuel: 0,
+        speed: 0,
+        location: [0, 0] as [number, number],
+        avg_distance: 0,
+        avg_speed: 0,
+    },
+    '''
     print(" [x] Received %r" % body)
     body_arr = body.split(':')
     id = body_arr[0]
@@ -36,10 +65,7 @@ def rbmq_callback(ch, method, properties, body: str):
     data = json.loads(body)
 
     
-    # Calculate distance
-
-
-    # 
+    # call distance function 
     
     #push_to_db(body)                                                                      
     #push_to_cache(id, value)
