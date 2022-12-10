@@ -128,7 +128,11 @@ function generate_query_intervals(type: String): string[] {
  *
  *
  */
-async function interval_query_pgserver(vin:string, intervals: string[], field: string) {
+async function interval_query_pgserver(
+  vin: string,
+  intervals: string[],
+  field: string
+) {
   var query_promises = [];
   var cur_date = new Date();
   var year = cur_date.getFullYear();
@@ -160,12 +164,31 @@ app.use(express.json());
  * {
  * labels: []
  * datasets: [{label, data:[], borderWidth:1}]
- * } 
+ * }
+ * example:
+ * res.json({
+      labels: [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+      ],
+      datasets: [
+        {
+          label: field,
+          data: [12, 19, 3, 5, 2, 3],
+          borderWidth: 1,
+        },
+      ],
+    }) 
+ *
  */
 
 app.post("/analytics", async (req: Request, res: Response) => {
   try {
-    const type: string = req.body["type"];
+    const type: string = req.body["interval"];
     const field: string = req.body["field"];
     const vin: string = req.body["vin"];
     var intervals = generate_query_intervals(type);

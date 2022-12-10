@@ -38,25 +38,31 @@ app.get("/car_status/:carID", async (req: Request, res: Response) => {
 app.get(
   "/analytics/:vin/:field/:interval",
   async (req: Request, res: Response) => {
-    const vin:string = req.params["vin"];
-    const field:string = req.params["field"];
-    res.json({
-      labels: [
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-      ],
-      datasets: [
-        {
-          label: field,
-          data: [12, 19, 3, 5, 2, 3],
-          borderWidth: 1,
-        },
-      ],
-    });
+    const vin: string = req.params["vin"];
+    const field: string = req.params["field"];
+    const interval: string = req.params["interval"];
+
+    const post_data = {
+      vin,
+      field,
+      interval,
+    };
+    const post_data_json: string = JSON.stringify(post_data);
+
+    const options = {
+      port: 8082,
+      host: "node.analytics",
+      method: "POST",
+      path: "/analytics",
+      headers: {
+        "Content-Type": "application/json",
+        "Content-Length": Buffer.byteLength(post_data_json),
+      },
+    };
+
+    const req_proxy = http.request(options);
+    req_proxy.write(post_data_json);
+    req_proxy.on("response", (response) => response.pipe(res));
   }
 );
 
@@ -72,9 +78,9 @@ app.get("/search", (req: Request, res: Response) => {
       method: "GET",
       path: `/search?q=${searchTerm}`,
     };
-    const req = http.request(options);
-    req.end();
-    req.on("response", (response) => response.pipe(res));
+    const req_proxy = http.request(options);
+    req_proxy.end();
+    req_proxy.on("response", (response) => response.pipe(res));
   }
 });
 
