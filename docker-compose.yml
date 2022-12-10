@@ -18,6 +18,7 @@ services:
         - '5672:5672'
         # Rabbit HTTP Management UI
         - '15672:15672'
+  
   nodeserv:
     image: nodeserv
     ports:
@@ -39,6 +40,12 @@ services:
 
   consumer:
     image: pyconsumer
+    restart: always
+    networks:
+      - fbridge
+
+  node.analytics:
+    image: nodeanalytics
     restart: always
     networks:
       - fbridge

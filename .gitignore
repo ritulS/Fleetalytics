@@ -3,3 +3,5 @@ nodeserv/node_modules
 nodserv/yarn-error.log
 nodefuzz/node_modules
 nodefuzz/yarn-error.log
+nodeanalytics/node_modules 
+nodeanalytics/yarn-error.log

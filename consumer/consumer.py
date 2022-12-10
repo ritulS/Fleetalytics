@@ -70,7 +70,7 @@ def rbmq_callback(ch, method, properties, body: str):
 
     # call distance function
 
-    #push_to_db(body)
+    #push_to_db(data)
     push_to_cache(id, value)
 
 
@@ -100,7 +100,6 @@ def connect_to_rbmq_broker(ip: str):
 
 
 def main():
-    #TODO - write host, port, password
     connect_to_redis_cache(host="redis.cache", port=6379, password="hello")
     connect_to_rbmq_broker("rabbitmq3")
 
