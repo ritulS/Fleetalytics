@@ -14,5 +14,6 @@ RUN npx yarn install
 COPY backend.ts ./
 
 EXPOSE 8082
+EXPOSE 5432
 
 CMD ["npx", "ts-node", "backend.ts"]
