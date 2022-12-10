@@ -23,40 +23,38 @@ try:
     )
     print('Connected to DB 1')
     cursor = conn.cursor()
-    cursor.execute("""
-    SELECT * from bus_data where sr_num=1;
-    """)
-    print(cursor.fetchall())
+
+    batch_num = 1
+    while True:
+        batch_str = "SELECT * from bus_data where sr_num={};".format(batch_num)
+        cursor.execute(batch_str)
+        batch_num += 1 
+        batch_data = cursor.fetchall()
+        
+        ##### convert to json
+        message = json.dumps(batch_data, default=str)
+        # print(type(message))
+        # print(message)
+        # jl = json.loads(message)
+        # print(jl)
+
+        ###### send using rmqp
+        #channel.basic_publish(exchange='logs', routing_key='', body=message)
+
+
+        time.sleep(3)
+
+        if batch_num > 1:
+            break
 
     
     time_now = datetime.now().time() # time object
 
     # threading to query every n seconds
     sn = 0
-    def query_n_secs(sn,cursor):
-        #threading.Timer(4.0,query_n_secs).start()
-        sn += 4
-        cursor.execute("""
-        "Select * from bus_data where sr_num=%(int)s"
-        VALUES (%(int)s, %(date)s, %(date)s, %(str)s);
-        """,
-        {'int': sn})
-        print(cursor.fetchall())
-        time.sleep(3)
+    #message = json.dumps(row, default=str)
             
-    query_n_secs(0,cursor)
-    # psql_select_query = "Select * from bus_data where sr_num=1"
 
-    # cursor.execute(psql_select_query)
-    # print("Selecting all rows in bus_table")
-
-    # bus_records = cursor.fetchall()
-    # i = 0
-
-    # for row in bus_records:
-    #     i += 1
-    #     message = json.dumps(row, default=str)
-    #     channel.basic_publish(exchange='logs', routing_key='', body=message)
 
     # connection.close()
 
