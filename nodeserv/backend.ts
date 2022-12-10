@@ -36,10 +36,10 @@ app.get("/car_status/:carID", async (req: Request, res: Response) => {
 
 // fake analytics route
 app.get(
-  "/analytics/:carID/:queryParam/:time",
+  "/analytics/:vin/:field/:interval",
   async (req: Request, res: Response) => {
-    const reqCarID: string = req.params["carID"];
-    const reqQueryParam: string = req.params["queryParam"];
+    const vin:string = req.params["vin"];
+    const field:string = req.params["field"];
     res.json({
       labels: [
         "Monday",
@@ -51,7 +51,7 @@ app.get(
       ],
       datasets: [
         {
-          label: reqQueryParam,
+          label: field,
           data: [12, 19, 3, 5, 2, 3],
           borderWidth: 1,
         },
@@ -74,7 +74,6 @@ app.get("/search", (req: Request, res: Response) => {
     };
     const req = http.request(options);
     req.end();
-
     req.on("response", (response) => response.pipe(res));
   }
 });
