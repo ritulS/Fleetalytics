@@ -10,13 +10,15 @@ def connect_to_redis_cache(host: str, port: int, password: str):
     global REDIS
     REDIS = redis.Redis(host=host, port=port, password=password)
 
-def get_from_cache(id:str):
+
+def get_from_cache(id: str):
     '''
     Get value from cache 
     - should be in JSON format
     '''
     global REDIS
     return REDIS.get(id)
+
 
 def push_to_cache(id: str, value: str):
     '''
@@ -33,11 +35,13 @@ def push_to_cache(id: str, value: str):
 def push_to_db(data):
     pass
 
-def calculate_distance(cur_data:str)->int:
+
+def calculate_distance(cur_data: str) -> int:
     '''
     Calculate the distance using coordinates
     '''
     return 0
+
 
 def rbmq_callback(ch, method, properties, body: str):
     '''
@@ -64,11 +68,10 @@ def rbmq_callback(ch, method, properties, body: str):
     # convert json to py list
     data = json.loads(body)
 
-    
-    # call distance function 
-    
-    #push_to_db(body)                                                                      
-    #push_to_cache(id, value)
+    # call distance function
+
+    #push_to_db(body)
+    push_to_cache(id, value)
 
 
 def connect_to_rbmq_broker(ip: str):
@@ -98,8 +101,8 @@ def connect_to_rbmq_broker(ip: str):
 
 def main():
     #TODO - write host, port, password
-    #connect_to_redis_cache()
-    connect_to_rbmq_broker("ip-172-26-1-243")
+    connect_to_redis_cache(host="redis.cache", port=6379, password="hello")
+    connect_to_rbmq_broker("rabbitmq3")
 
 
 if __name__ == '__main__':
