@@ -1,6 +1,6 @@
 # dockerfile for node fuzzy search server
 FROM node:16-alpine
-WORKDIR /nodefuzzysearcher
+WORKDIR /nodefuzz
 
 MAINTAINER AlfredDaimari
 
