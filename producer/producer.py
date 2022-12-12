@@ -5,6 +5,7 @@ import json
 import pika
 from datetime import datetime
 import threading
+
 # connection = pika.BlockingConnection(
 #     pika.ConnectionParameters(host='172.26.1.243', port=5672, socket_timeout=2))
 # channel = connection.channel()

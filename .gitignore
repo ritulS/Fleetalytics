@@ -1,4 +1,5 @@
 consumer/.venv
+producer/.venv
 nodeserv/node_modules
 nodserv/yarn-error.log
 nodefuzz/node_modules
