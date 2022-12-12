@@ -62,3 +62,8 @@ services:
       - fbridge
     volumes:
       - ./postgres:/docker-entrypoint-initdb.d
+
+
+networks:
+  fbridge:
+    driver: bridge
