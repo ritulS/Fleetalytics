@@ -3,6 +3,17 @@ import redis
 import json
 from math import radians, cos, sin, asin, sqrt
 #import mysql.connector
+from sqlalchemy import create_engine
+from datetime import datetime
+import psycopg2
+
+
+## Connecting to DB 2
+conn = psycopg2.connect(
+    "dbname='db1' user='postgres' password='postgres' host='localhost'"
+)
+print('Connected to DB 1')
+cursor = conn.cursor()
 
 REDIS: redis.Redis
 
@@ -33,15 +44,22 @@ def push_to_cache(id: str, value: str):
     print(f"set value {id} with {value}")
 
 
-def push_to_db(data):
-
+def push_to_db(data:list,connection):
+    '''
+    data format:
+    [1, "02-12-2019", "10:04:53", "A41121", 460.0, -22.98354, -43.217812, 0.0, "D", 02-12-2019, 10:04:53] 
+    '''
+    res = cursor.execute("INSERT INTO bus_data (sr_num, date0, time0, vin, \
+        route, latitude, longitude, speed, type, date, time ) VALUES(%s, %s, %s)"\
+        , (data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7],\
+             data[8], data[9], data[10]))
 
     pass
 
 
 def calculate_distance(cur_data: list) -> int:
     '''
-    [1, "02-12-2019", "10:04:53", "A41121", 460.0, -22.98354, -43.217812, 0.0, "D"]                                       ", "10:32:33                      ", "A48044    ", 426.0, -22.970619, -43.188637, 41.48, "E    "]
+    [1, "02-12-2019", "10:04:53", "A41121", 460.0, -22.98354, -43.217812, 0.0, "D", 02-12-2019, 10:04:53]                                       ", "10:32:33                      ", "A48044    ", 426.0, -22.970619, -43.188637, 41.48, "E    "]
     Calculate the distance using coordinates
     input => lt1, lt2, lg1, lg2
     Output => distance between prev gps and cur gps in KM
