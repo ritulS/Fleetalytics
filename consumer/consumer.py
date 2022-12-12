@@ -1,6 +1,7 @@
 import pika
 import redis
 import json
+from math import radians, cos, sin, asin, sqrt
 #import mysql.connector
 
 REDIS: redis.Redis
@@ -33,14 +34,40 @@ def push_to_cache(id: str, value: str):
 
 
 def push_to_db(data):
+
+
     pass
 
 
-def calculate_distance(cur_data: str) -> int:
+def calculate_distance(cur_data: list) -> int:
     '''
+    [1, "02-12-2019", "10:04:53", "A41121", 460.0, -22.98354, -43.217812, 0.0, "D"]                                       ", "10:32:33                      ", "A48044    ", 426.0, -22.970619, -43.188637, 41.48, "E    "]
     Calculate the distance using coordinates
+    input => lt1, lt2, lg1, lg2
+    Output => distance between prev gps and cur gps in KM
     '''
-    return 0
+    prev_data = get_from_cache(cur_data[3]) #json format from cache
+    prev_data_list = json.loads(prev_data) #list format
+    prev_lat = prev_data_list['location'][0] # prev latitude
+    prev_long = prev_data_list['location'][1] # prev longitude
+
+    cur_lat = cur_data[6] # Cur latitude
+    cur_long = cur_data[5]# Cur longitude
+
+    # Haversine formula
+    dlon = cur_long - prev_long
+    dlat = cur_lat - prev_lat
+    a = sin(dlat / 2)**2 + cos(prev_lat) * cos(cur_lat) * sin(dlon / 2)**2
+ 
+    c = 2 * asin(sqrt(a))
+    
+    # Radius of earth in kilometers. Use 3956 for miles
+    r = 6371
+      
+    # calculate the result
+    return(c * r)
+    
+    
 
 
 def rbmq_callback(ch, method, properties, body: str):
@@ -48,15 +75,14 @@ def rbmq_callback(ch, method, properties, body: str):
     Callback function for rabbitmq
 
     body:str - sent in the format "id:'{}'" where '{}' is in JSON format
-    ["2019-01-25", "08:50:39", "C51623", 371.0, "-22.883270", "-43.342560", 37.0]
 
     Cache format
 
     carStatus:{
-        cid: cid as string,
+        vin: cid as string,
         fuel: 0,
         speed: 0,
-        location: [0, 0] as [number, number],
+        location: [0, 0] as [long, lat],
         avg_distance: 0,
         avg_speed: 0,
     },
