@@ -7,7 +7,7 @@ import http from "http";
 // setting up redis connection
 const redisclient = createClient({
   socket: {
-    host: "redis.cache",
+    host: "localhost",
     port: 6379,
   },
   password: "hello",
@@ -24,8 +24,8 @@ const app: Express = express();
 
 app.use(express.static("public"));
 
-app.get("/car_status/:carID", async (req: Request, res: Response) => {
-  const reqCarID: string = req.params["carID"];
+app.get("/car_status/:vin", async (req: Request, res: Response) => {
+  const reqCarID: string = req.params["vin"];
   try {
     const value = await redisclient.get(reqCarID);
     res.send(value);
@@ -65,6 +65,24 @@ app.get(
     req_proxy.on("response", (response) => response.pipe(res));
   }
 );
+
+app.get("/fleet", (_: Request, res: Response) => {
+  const options = {
+    port: 8082,
+    host: "node.analytics",
+    method: "GET",
+    path: "/fleet",
+  };
+  
+  //const req_proxy = http.request(options);
+  //req_proxy.on("response", (response) => response.pipe(res));
+  res.json({
+    miniBus: { fuel: 0, distance: 0, number_of_bus: 0 },
+    doubleDecker: { fuel: 0, distance: 0, number_of_bus: 0 },
+    coach: { fuel: 0, distance: 0, number_of_bus: 0 },
+    express: { fuel: 0, distance: 0, number_of_bus: 0 },
+  })
+});
 
 app.get("/search", (req: Request, res: Response) => {
   const searchTerm: string = req.query.q as string;

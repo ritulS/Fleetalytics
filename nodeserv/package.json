@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "npx ts-node backend.ts",
     "watch-backend": "npx nodemon -w backend.ts -x \"npx ts-node backend.ts\" -e \"ts\"",
-    "watch-frontend": "npx nodemon -w index.tsx -w components.tsx -w status.tsx -w analytics.tsx -w styles.css -e \"tsx,css\" -x \"npx webpack build\"",
+    "watch-frontend": "npx nodemon -w index.tsx -w components.tsx -w status.tsx -w analytics.tsx -w styles.css -w fleetview.tsx -e \"tsx,css\" -x \"npx webpack build\"",
     "build": "npx webpack build"
   },
   "dependencies": {

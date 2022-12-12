@@ -156,6 +156,13 @@ async function interval_query_pgserver(
   return results;
 }
 
+/**
+ *
+ *@description Function for querying server for fleet data of all
+ *
+ */
+async function fleet_query_pgserver() {}
+
 const app: Express = express();
 app.use(cors());
 app.use(express.json());
@@ -193,6 +200,15 @@ app.post("/analytics", async (req: Request, res: Response) => {
     const vin: string = req.body["vin"];
     var intervals = generate_query_intervals(type);
     const response = await interval_query_pgserver(vin, intervals, field);
+    res.json({ query: response });
+  } catch (e) {
+    res.json({ error: { type: (e as Object).toString() } });
+  }
+});
+
+app.get("/fleet", async (req: Request, res: Response) => {
+  try {
+    const response = await fleet_query_pgserver();
     res.json({ query: response });
   } catch (e) {
     res.json({ error: { type: (e as Object).toString() } });

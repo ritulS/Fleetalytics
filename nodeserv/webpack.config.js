@@ -6,6 +6,7 @@ module.exports = {
     index: "./index.tsx",
     analytics: "./analytics.tsx",
     status: "./status.tsx",
+    fleetview: "./fleetview.tsx",
   },
   output: {
     path: path.resolve(__dirname, "./public"),
@@ -21,7 +22,7 @@ module.exports = {
       {
         test: /\.(css)$/,
         exclude: /node_modules/,
-        use: ["style-loader", "css-loader", "postcss-loader"]
+        use: ["style-loader", "css-loader", "postcss-loader"],
       },
     ],
   },
