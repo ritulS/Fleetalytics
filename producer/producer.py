@@ -3,12 +3,13 @@
 import time
 import json
 import pika
+from datetime import datetime
+import threading
+# connection = pika.BlockingConnection(
+#     pika.ConnectionParameters(host='172.26.1.243', port=5672, socket_timeout=2))
+# channel = connection.channel()
 
-connection = pika.BlockingConnection(
-    pika.ConnectionParameters(host='172.26.1.243', port=5672, socket_timeout=2))
-channel = connection.channel()
-
-channel.exchange_declare(exchange='logs', exchange_type='fanout')
+# channel.exchange_declare(exchange='logs', exchange_type='fanout')
 
 # print("Vin number sent")
 
@@ -18,24 +19,44 @@ import psycopg2
 try:
     #print('before conn')
     conn = psycopg2.connect(
-        "dbname='bus_data' user='postgres' password='postgres' host='localhost'"
+        "dbname='db1' user='postgres' password='postgres' host='localhost'"
     )
-    #print('after conn')
+    print('Connected to DB 1')
     cursor = conn.cursor()
-    psql_select_query = "SELECT * FROM bus_table"
 
-    cursor.execute(psql_select_query)
-    print("Selecting all rows in bus_table")
+    batch_num = 1
+    while True:
+        batch_str = "SELECT * from bus_data where sr_num={};".format(batch_num)
+        cursor.execute(batch_str)
+        batch_num += 1 
+        batch_data = cursor.fetchall()
+        
+        ##### convert to json
+        message = json.dumps(batch_data, default=str)
+        # print(type(message))
+        # print(message)
+        # jl = json.loads(message)
+        # print(jl)
 
-    bus_records = cursor.fetchall()
-    i = 0
+        ###### send using rmqp
+        #channel.basic_publish(exchange='logs', routing_key='', body=message)
 
-    for row in bus_records:
-        i += 1
-        message = json.dumps(row, default=str)
-        channel.basic_publish(exchange='logs', routing_key='', body=message)
 
-    connection.close()
+        time.sleep(3)
+
+        if batch_num > 1:
+            break
+
+    
+    time_now = datetime.now().time() # time object
+
+    # threading to query every n seconds
+    sn = 0
+    #message = json.dumps(row, default=str)
+            
+
+
+    # connection.close()
 
 except (Exception, psycopg2.Error) as error:
     print(error)
