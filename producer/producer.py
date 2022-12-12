@@ -5,6 +5,7 @@ import json
 import pika
 from datetime import datetime
 import threading
+
 # connection = pika.BlockingConnection(
 #     pika.ConnectionParameters(host='172.26.1.243', port=5672, socket_timeout=2))
 # channel = connection.channel()
@@ -30,7 +31,8 @@ try:
         cursor.execute(batch_str)
         batch_num += 1 
         batch_data = cursor.fetchall()
-        
+        print(type(batch_data))
+        print(batch_data)      
         ##### convert to json
         message = json.dumps(batch_data, default=str)
         # print(type(message))
@@ -44,8 +46,8 @@ try:
 
         time.sleep(3)
 
-        if batch_num > 1:
-            break
+        # if batch_num > 1:
+        #     break
 
     
     time_now = datetime.now().time() # time object
