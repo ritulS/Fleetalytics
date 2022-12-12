@@ -78,9 +78,9 @@ export function AnalyticsQueryModal(props: { updateQueryParams: Function }) {
   const updateQueryParams = (e: React.FormEvent<HTMLButtonElement>) =>
     props.updateQueryParams(queryParams);
 
-  const updateParamVariable = (paramType: "speed" | "distance" | "fuel") =>
+  const updateParamVariable = (paramType: "speed" | "distance") =>
     updateQueryParams_({ ...queryParams, param: paramType });
-  const updateTimeVariable = (timeType: "12-hrs" | "day" | "week") =>
+  const updateTimeVariable = (timeType: "1h" | "30m" | "15m") =>
     updateQueryParams_({ ...queryParams, time: timeType });
   const updatePlotVariable = (plotType: "line" | "bar") =>
     updateQueryParams_({ ...queryParams, plot: plotType });
@@ -133,22 +133,6 @@ export function AnalyticsQueryModal(props: { updateQueryParams: Function }) {
                   type="radio"
                   className="btn-check"
                   name="paramradio"
-                  id="paramradio2"
-                  autoComplete="off"
-                  onClick={() => updateParamVariable("fuel")}
-                  checked={queryParams.param == "fuel" ? true : false}
-                ></input>
-                <label
-                  className="btn btn-outline-primary"
-                  htmlFor="paramradio2"
-                >
-                  fuel
-                </label>
-
-                <input
-                  type="radio"
-                  className="btn-check"
-                  name="paramradio"
                   id="paramradio3"
                   autoComplete="off"
                   onClick={() => updateParamVariable("distance")}
@@ -173,11 +157,11 @@ export function AnalyticsQueryModal(props: { updateQueryParams: Function }) {
                   name="timeradio"
                   id="timeradio1"
                   autoComplete="off"
-                  checked={queryParams.time == "12-hrs" ? true : false}
-                  onClick={() => updateTimeVariable("12-hrs")}
+                  checked={queryParams.time == "1h" ? true : false}
+                  onClick={() => updateTimeVariable("1h")}
                 ></input>
                 <label className="btn btn-outline-primary" htmlFor="timeradio1">
-                  12-hrs
+                  1h
                 </label>
 
                 <input
@@ -186,8 +170,8 @@ export function AnalyticsQueryModal(props: { updateQueryParams: Function }) {
                   name="timeradio"
                   id="timeradio2"
                   autoComplete="off"
-                  checked={queryParams.time == "day" ? true : false}
-                  onClick={() => updateTimeVariable("day")}
+                  checked={queryParams.time == "30m" ? true : false}
+                  onClick={() => updateTimeVariable("30m")}
                 ></input>
                 <label className="btn btn-outline-primary" htmlFor="timeradio2">
                   day
@@ -199,8 +183,8 @@ export function AnalyticsQueryModal(props: { updateQueryParams: Function }) {
                   name="timeradio"
                   id="timeradio3"
                   autoComplete="off"
-                  checked={queryParams.time == "week" ? true : false}
-                  onClick={() => updateTimeVariable("week")}
+                  checked={queryParams.time == "15m" ? true : false}
+                  onClick={() => updateTimeVariable("15m")}
                 ></input>
                 <label className="btn btn-outline-primary" htmlFor="timeradio3">
                   week
@@ -362,20 +346,20 @@ export function VehicleSearchModal(props: VehicleSearchModalProps) {
 
 export function VehicleStatusComp(props: VehicleStatusCompProps) {
   return (
-      <div className="w-full rounded-md p-4 text-zinc-50">
-        <h3 className="text-center text-green-500 underline underline-offset-4">
-          car status
-        </h3>
-        <h4>car_id: {props.info.cid}</h4>
-        <h4>fuel: {props.info.fuel}</h4>
-        <h4>current speed: {props.info.speed}</h4>
-        <h4>
-          current location:{" "}
-          {props.info.location[0] + "," + props.info.location[1]}
-        </h4>
-        <h4>avg distance covered: {props.info.avg_distance}</h4>
-        <h4>avg speed: {props.info.avg_speed}</h4>
-      </div>
+    <div className="w-full rounded-md p-4 text-zinc-50">
+      <h3 className="text-center text-green-500 underline underline-offset-4">
+        car status
+      </h3>
+      <h4>car_id: {props.info.cid}</h4>
+      <h4>fuel: {props.info.fuel}</h4>
+      <h4>current speed: {props.info.speed}</h4>
+      <h4>
+        current location:{" "}
+        {props.info.location[0] + "," + props.info.location[1]}
+      </h4>
+      <h4>avg distance covered: {props.info.avg_distance}</h4>
+      <h4>avg speed: {props.info.avg_speed}</h4>
+    </div>
   );
 }
 
@@ -383,6 +367,8 @@ export function NavBar(props: NavBarProps) {
   var isHome: Boolean = false;
   var isStatus: Boolean = false;
   var isAnalytics: Boolean = false;
+  var isFleetView: Boolean = false;
+
   if (props.type == "home") {
     isHome = true;
   }
@@ -393,6 +379,10 @@ export function NavBar(props: NavBarProps) {
 
   if (props.type == "analytics") {
     isAnalytics = true;
+  }
+
+  if (props.type == "fleetview") {
+    isFleetView = true;
   }
 
   return (
@@ -426,11 +416,63 @@ export function NavBar(props: NavBarProps) {
               analytics
             </a>
           </li>
+          <li className="nav-item">
+            <a
+              className={"nav-link" + (isFleetView ? " active" : "")}
+              href="/fleetview.html"
+            >
+              fleetview
+            </a>
+          </li>
         </ul>
         <form className="d-flex" role="search">
           {isAnalytics && <AnalyticsQueryBtn />}
-          <VehicleSearchBtn />
+          {!isFleetView && <VehicleSearchBtn />}
         </form>
+      </div>
+    </div>
+  );
+}
+
+export function FleetStatus(props: any) {
+  return (
+    <div className="w-full p-10">
+      <div className="flex justify-between text-zinc-50 w-1/2 relative left-1/4 mb-10">
+        <div className="space-y-2">
+          <h3>Mini Bus</h3>
+          <img src="/miniBus.jpg" className="img-fluid" alt="miniBus"></img>
+          <p>fuel: {props.fleetInfo.miniBus.fuel}</p>
+          <p>distance covered: {props.fleetInfo.miniBus.distance}</p>
+          <p>number of buses: {props.fleetInfo.miniBus.number_of_bus}</p>
+        </div>
+        <div className="space-y-2">
+          <h3>Double Decker Bus</h3>
+          <img
+            src="/doubleDecker.jpg"
+            className="img-fluid"
+            alt="doubleDecker"
+          ></img>
+          <p>fuel: {props.fleetInfo.doubleDecker.fuel}</p>
+          <p>distance covered: {props.fleetInfo.doubleDecker.distance}</p>
+          <p>number of buses: {props.fleetInfo.doubleDecker.number_of_bus}</p>
+        </div>
+      </div>
+      <div className="flex justify-between text-zinc-50 w-1/2 relative left-1/4">
+        <div className="space-y-2">
+          <h3>Coach Bus</h3>
+          <img src="/coach.jpg" className="img-fluid" alt="coach"></img>
+          <p>fuel: {props.fleetInfo.miniBus.fuel}</p>
+          <p>distance covered: {props.fleetInfo.coach.distance}</p>
+          <p>number of buses: {props.fleetInfo.coach.number_of_bus}</p>
+        </div>
+
+        <div className="space-y-2">
+          <h3>Express Bus</h3>
+          <img src="/express.jpg" className="img-fluid" alt="express"></img>
+          <p>fuel: {props.fleetInfo.miniBus.fuel}</p>
+          <p>distance covered: {props.fleetInfo.express.distance}</p>
+          <p>number of buses: {props.fleetInfo.express.number_of_bus}</p>{" "}
+        </div>
       </div>
     </div>
   );

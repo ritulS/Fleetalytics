@@ -12,7 +12,7 @@ if (cid == undefined) {
 // object for sharing car status between the two react components
 
 const StatusRedux = {
-  carStatus:{
+  carStatus: {
     cid: cid as string,
     fuel: 0,
     speed: 0,
@@ -20,7 +20,7 @@ const StatusRedux = {
     avg_distance: 0,
     avg_speed: 0,
   },
-  updateCarStatus: ()=>console.log("default updateCarStatusCalled"),
+  updateCarStatus: () => console.log("default updateCarStatusCalled"),
 };
 
 async function get_car_status(id: string) {
@@ -31,14 +31,21 @@ async function get_car_status(id: string) {
 
 function StatusNav() {
   const [carID, update_carid_] = useState(cid);
+  const [counter, updateCounter] = useState(0);
+  const plusList = [-1, 1];
+
+  setTimeout(
+    () => updateCounter(counter + plusList[Math.floor(Math.random() * 2)]),
+    2000
+  );
 
   useEffect(() => {
     get_car_status(carID as string).then((res) => {
       StatusRedux.carStatus = res as any;
       //@ts-ignore
-      StatusRedux.updateCarStatus()
+      StatusRedux.updateCarStatus();
     });
-  }, [carID]);
+  }, [carID, counter]);
 
   const update_carID = (carID: string) => {
     update_carid_(carID);
@@ -55,9 +62,9 @@ function StatusNav() {
 function StatusDisp() {
   const [carStatus, update_carStatus_] = useState(StatusRedux.carStatus);
   const update_carStatus = () => {
-                console.log("-- updating statusdisp using status redux --")
-                update_carStatus_(StatusRedux.carStatus);
-        }
+    console.log("-- updating statusdisp using status redux --");
+    update_carStatus_(StatusRedux.carStatus);
+  };
 
   //setting redux state
   //@ts-ignore
