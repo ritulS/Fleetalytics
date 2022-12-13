@@ -44,7 +44,7 @@ def push_to_cache(id: str, value: str):
     print(f"set value {id} with {value}")
 
 
-def push_to_db(data:list,connection):
+def push_to_db(data:list, connection):
     '''
     data format:
     [1, "02-12-2019", "10:04:53", "A41121", 460.0, -22.98354, -43.217812, 0.0, "D", 02-12-2019, 10:04:53] 
@@ -118,9 +118,9 @@ def rbmq_callback(ch, method, properties, body: str):
     push_to_cache(id, value)
 
 
-def connect_to_rbmq_broker(ip: str):
+def connect_to_rbmq_broker():
     #make connection with producer
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host=ip))
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq.broker', port=5672))
     #setup channel with producer
     channel = connection.channel()
     print("Connection with RMQP established")
@@ -145,7 +145,7 @@ def connect_to_rbmq_broker(ip: str):
 
 def main():
     connect_to_redis_cache(host="redis.cache", port=6379, password="hello")
-    connect_to_rbmq_broker("rabbitmq3")
+    connect_to_rbmq_broker()
 
 
 if __name__ == '__main__':
