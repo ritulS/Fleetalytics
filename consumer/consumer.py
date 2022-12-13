@@ -28,8 +28,8 @@ def get_from_cache(id: str):
     Get value from cache 
     - should be in JSON format
     '''
-    global REDIS
-    return REDIS.get(id)
+    global REDIS    
+    return json.loads(REDIS.get(id))
 
 
 def push_to_cache(id: str, value: str):
@@ -64,7 +64,7 @@ def calculate_distance(cur_data: list) -> int:
     Output => distance between prev gps and cur gps in KM
     '''
     prev_data = get_from_cache(cur_data[3]) #json format from cache
-    prev_data_dict = json.loads(prev_data) #list format
+    prev_data_dict = json.loads(prev_data) #dict format
     prev_lat = prev_data_dict['location'][0] # prev latitude
     prev_long = prev_data_dict['location'][1] # prev longitude
 
@@ -84,26 +84,61 @@ def calculate_distance(cur_data: list) -> int:
     # calculate the result
     return int(c * r)
     
-    
+
+########### Function to add avg_dist and convert to cache format
+def to_cache_format(data:list, avg_dist):
+    # list to dict
+    # list format: Prod format
+    # add avg_distance
+    template = {
+        'vin': str(data[3]),
+        'fuel': 0,
+        'speed': data[7],
+        'location': [data[6], data[5]],
+        'avg_distance': avg_dist,
+        'avg_speed': 0,
+        'time': data[-1]
+    }
+
+    return template
+
+
+def avg_speed_dist(ndata:list):
+    # ndata: list () 
+    # pdata: dict from cache
+    pdata = get_from_cache(ndata[3]) # prev data as dict
+    cur_time = ndata[-1]
+    prev_time = pdata['time']
+    new_dist = calculate_distance(ndata)   
+    prev_avg_dist = pdata['avg_distance']
+
+    ### Avg Distance Calc
+    FMT = '%H:%M:%S'
+    tdelta = datetime.strptime(cur_time, FMT) - datetime.strptime(prev_time, FMT)
+    tdelta_in_minutes = tdelta.total_seconds() / 60
+
+    m = (12*60) - tdelta_in_minutes
+    avg_dist = m * ((prev_avg_dist + new_dist)/(12*60))
+
+    ### Avg Speed Calc
+    # elapsed_time = (12*60) - 
+    # avg_speed = ((prev_avg_dist + new_dist)/12)/
+
+
+    return avg_dist
 
 
 def rbmq_callback(ch, method, properties, body: str):
     '''
     Callback function for rabbitmq
 
-    body:str - sent in the format "id:'{}'" where '{}' is in JSON format
-
-    Cache format
-
-    carStatus:{
-        vin: cid as string,
-        fuel: 0,
-        speed: 0,
-        location: [0, 0] as [long, lat],
-        avg_distance: 0,
-        avg_speed: 0,
-    },
+    body:json format 
+    convert to list: Prod format
+    ###### IMP #########
+    Prod format: [sr_num, date0, time0, vin,route, latitude, longitude, speed, type, date, time] 
+    Prod format example: [1, "02-12-2019", "10:04:53", "A41121", 460.0, -22.98354, -43.217812, 0.0, "D", 02-12-2019, 10:04:53] 
     '''
+
     print(" [x] Received %r" % body)
     body_arr = body.split(':')
     id = body_arr[0]
@@ -111,11 +146,33 @@ def rbmq_callback(ch, method, properties, body: str):
     # convert json to py list
     data = json.loads(body)
 
-    # call distance function
+    ### Push to db2 
+    push_to_db(data)
 
-    #push_to_db(data)
+    ### Calculate avg distance
+    avg_dist = avg_speed_dist(data)
+
+    ### Convert to cache format and add avg_dist
+    '''    
+    Cache format  
+    carStatus:{
+        'vin': cid as string,
+        'fuel': 0,
+        'speed': 0,
+        'location': [0, 0] as [long, lat],
+        'avg_distance': 0,
+        'avg_speed': 0,
+    }'''
+    cache_data = to_cache_format(data,avg_dist)
+
+    ### Push to cache
+    vin = data[3]
+    push_to_cache(vin, cache_data)
+   
+
+    
     #value = generate_cache_data() -> has to be in the format of carStatus
-    push_to_cache(id, value)
+    #push_to_cache(id, value)
 
 
 def connect_to_rbmq_broker():

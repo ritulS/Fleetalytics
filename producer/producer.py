@@ -6,7 +6,7 @@ import pika
 from datetime import datetime
 import threading
 import psycopg2
-from datetime import datetime
+from datetime import datetime, date
 
 connection = pika.BlockingConnection(
     pika.ConnectionParameters(host='172.26.1.243', port=5672, socket_timeout=2))
@@ -23,7 +23,7 @@ def add_cur_date_time(row:tuple):
     # date format: yyyy-mm-dd
     # time format: HH:MI:SS
     cur_date = datetime.today().strftime('%Y-%m-%d')
-    cur_time = datetime.now.strftime("%H:%M:%S")
+    cur_time = datetime.now().strftime("%H:%M:%S")
 
     row.append(cur_date)
     row.append(cur_time)
@@ -34,9 +34,8 @@ def add_cur_date_time(row:tuple):
 
 
 try:
-
     # Connect with local postgres DB
-    #print('before conn')
+    # print('before conn')
     conn = psycopg2.connect(
         "dbname='db1' user='postgres' password='postgres' host='localhost'"
     )
@@ -58,6 +57,9 @@ try:
             m = add_cur_date_time(l)
             # convert tuple to json
             message = json.dumps(m, default=str)
+            # print(type(message))
+            # test = json.loads(message)
+            # print(type(test))
             ### send using rmqp
             channel.basic_publish(exchange='logs', routing_key='', body=message)
 
