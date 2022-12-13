@@ -5,6 +5,8 @@ import json
 import pika
 from datetime import datetime
 import threading
+import psycopg2
+from datetime import datetime
 
 connection = pika.BlockingConnection(
     pika.ConnectionParameters(host='172.26.1.243', port=5672, socket_timeout=2))
@@ -14,10 +16,26 @@ channel.exchange_declare(exchange='logs', exchange_type='fanout')
 
 # print("Vin number sent")
 
-import psycopg2
 
-# Connect with local postgres DB
+######################
+def add_cur_date_time(row:tuple):
+    # add current date and time to data before sending to server
+    # date format: yyyy-mm-dd
+    # time format: HH:MI:SS
+    cur_date = datetime.today().strftime('%Y-%m-%d')
+    cur_time = datetime.now.strftime("%H:%M:%S")
+
+    row.append(cur_date)
+    row.append(cur_time)
+
+    return row
+    
+
+
+
 try:
+
+    # Connect with local postgres DB
     #print('before conn')
     conn = psycopg2.connect(
         "dbname='db1' user='postgres' password='postgres' host='localhost'"
@@ -27,16 +45,20 @@ try:
 
     batch_num = 1
     while True:
+        ### Get iter batch from DB1
         batch_str = "SELECT * from bus_data where sr_num={};".format(batch_num)
         cursor.execute(batch_str)
         batch_num += 1 
         batch_data = cursor.fetchall()
-        print(type(batch_data))
+        #print(type(batch_data))
 
         for i in batch_data:
+            # convert tuple to list
+            l = list(i)
+            m = add_cur_date_time(l)
             # convert tuple to json
-            message = json.dumps(i, default=str)
-            ###### send using rmqp
+            message = json.dumps(m, default=str)
+            ### send using rmqp
             channel.basic_publish(exchange='logs', routing_key='', body=message)
 
         time.sleep(3)
