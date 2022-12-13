@@ -5,6 +5,7 @@ from math import radians, cos, sin, asin, sqrt
 #import mysql.connector
 from datetime import datetime
 import psycopg2
+import codecs 
 
 ####### DB CONNECTION FOR SERVER IMPLEMENTATION #############
 ## Connecting to DB 2
@@ -17,9 +18,9 @@ import psycopg2
 ####### DB CONNECTION FOR LOCAL TESTING #############
 ## Connecting to DB 2
 conn = psycopg2.connect(
-    "dbname='db1' user='postgres' password='postgres' host='localhost'"
+    "dbname='db2' user='postgres' password='postgres' host='localhost'"
 )
-print('Connected to DB 1')
+print('Connected to DB 2')
 cursor = conn.cursor()
 
 
@@ -39,6 +40,7 @@ def get_from_cache(id: str):
     - should be in JSON format
     '''
     global REDIS    
+    
     return json.loads(REDIS.get(id))
 
 
@@ -54,16 +56,16 @@ def push_to_cache(id: str, value: str):
     print(f"set value {id} with {value}")
 
 
-def push_to_db(data:list,delta_dist):
+def push_to_db(data:list,delta_dist,conn):
     '''
     data format:
     [1, "02-12-2019", "10:04:53", "A41121", 460.0, -22.98354, -43.217812, 0.0, "D", 02-12-2019, 10:04:53] 
     '''
-    res = cursor.execute("INSERT INTO bus_data (sr_num, date0, time0, vin, \
+    cursor.execute("INSERT INTO bus_data (sr_num, date0, time0, vin, \
         route, latitude, longitude, speed, type, date, time, delta_d ) VALUES(%s, %s, %s,%s, %s, %s, %s, %s, %s,%s, %s, %s)"\
         , (data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7],\
              data[8], data[9], data[10], delta_dist))
-
+    conn.commit()
 
 
 def calculate_distance(cur_data: list) -> int:
@@ -138,7 +140,7 @@ def avg_speed_dist(ndata:list):
     return avg_dist
 
 
-def rbmq_callback(ch, method, properties, body: str):
+def rbmq_callback(ch, method, properties, body):
     '''
     Callback function for rabbitmq
 
@@ -148,22 +150,34 @@ def rbmq_callback(ch, method, properties, body: str):
     Prod format: [sr_num, date0, time0, vin,route, latitude, longitude, speed, type, date, time] 
     Prod format example: [1, "02-12-2019", "10:04:53", "A41121", 460.0, -22.98354, -43.217812, 0.0, "D", 02-12-2019, 10:04:53] 
     '''
-
-    print(" [x] Received %r" % body)
-    body_arr = body.split(':')
-    id = body_arr[0]
-    value = body_arr[1]
+    print(type(body))
+    #print(" [x] Received %r" % body)
+    # body_arr = body.split(':')
+    # id = body_arr[0]
+    # value = body_arr[1]
     # convert json to py list
-    data = json.loads(body)
-
+    body_str = codecs.decode(body,'UTF-8')
+    data = json.loads(body_str)
+    print(type(data))
     ### Calculate delta dist
-    delta_dist = calculate_distance(data)
+    delta_dist = 0
+    vin = data[3]
+    if REDIS.get(vin) == None:
+        delta_dist = 0
+        avg_dist = 0
+        print("reached null place")
+    else:
 
-    ### Push to db2 
+        delta_dist = calculate_distance(data)
+        print("Delta dist calculated")
+        ### Calculate avg distance
+        avg_dist = avg_speed_dist(data)
+
+    ### Push to db2
+    print(data) 
     push_to_db(data,delta_dist)
+    print("reached db push")
 
-    ### Calculate avg distance
-    avg_dist = avg_speed_dist(data)
 
     ### Convert to cache format and add avg_dist
     '''    
@@ -177,10 +191,11 @@ def rbmq_callback(ch, method, properties, body: str):
         'avg_speed': 0,
     }'''
     cache_data = to_cache_format(data,avg_dist)
-
+    print("cache data generated")
+    print(type(cache_data))
     ### Push to cache
     vin = data[3]
-    push_to_cache(vin, cache_data)
+    push_to_cache(vin, json.dumps(cache_data))
    
 
     
@@ -190,7 +205,8 @@ def rbmq_callback(ch, method, properties, body: str):
 
 def connect_to_rbmq_broker():
     #make connection with producer
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host='5.199.168.22', port=5672, virtual_host='cherry_broker'))
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost', port=5672))
+    print("Connection setup")
     #setup channel with producer 
     channel = connection.channel()
     print("Connection with RMQP established")

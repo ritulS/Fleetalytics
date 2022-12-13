@@ -9,9 +9,8 @@ import psycopg2
 from datetime import datetime, date
 
 connection = pika.BlockingConnection(
-  pika.ConnectionParameters(host='172.26.1.243',
-                            port=5672,
-                            virtual_host='cherry_broker'))
+  pika.ConnectionParameters(host='localhost',
+                            port=5672))
 
 channel = connection.channel()
 
@@ -23,13 +22,14 @@ channel.queue_declare(queue='fleetalytics')
 
 
 ######################
-def add_cur_date_time(row: tuple):
+def add_cur_date_time(row: list):
   # add current date and time to data before sending to server
   # date format: yyyy-mm-dd
   # time format: HH:MI:SS
   cur_date = datetime.today().strftime('%Y-%m-%d')
   cur_time = datetime.now().strftime("%H:%M:%S")
-
+  del row[-1]
+  del row[-1]  
   row.append(cur_date)
   row.append(cur_time)
 
@@ -57,8 +57,10 @@ try:
       ctr += 1
       # convert tuple to list
       l = list(i)
+      
       m = add_cur_date_time(l)
-      # convert tuple to json
+      print(m)
+      # convert list to json
       message = json.dumps(m, default=str)
       # print(type(message))
       # test = json.loads(message)
