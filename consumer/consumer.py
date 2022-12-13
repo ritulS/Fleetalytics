@@ -17,13 +17,11 @@ import codecs
 
 ####### DB CONNECTION FOR LOCAL TESTING #############
 ## Connecting to DB 2
-conn = psycopg2.connect(
+connection = psycopg2.connect(
     "dbname='db2' user='postgres' password='postgres' host='localhost'"
 )
 print('Connected to DB 2')
-cursor = conn.cursor()
-
-
+cursor = connection.cursor()
 
 
 REDIS: redis.Redis
@@ -56,7 +54,7 @@ def push_to_cache(id: str, value: str):
     print(f"set value {id} with {value}")
 
 
-def push_to_db(data:list,delta_dist,conn):
+def push_to_db(data:list,delta_dist,connection):
     '''
     data format:
     [1, "02-12-2019", "10:04:53", "A41121", 460.0, -22.98354, -43.217812, 0.0, "D", 02-12-2019, 10:04:53] 
@@ -65,7 +63,7 @@ def push_to_db(data:list,delta_dist,conn):
         route, latitude, longitude, speed, type, date, time, delta_d ) VALUES(%s, %s, %s,%s, %s, %s, %s, %s, %s,%s, %s, %s)"\
         , (data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7],\
              data[8], data[9], data[10], delta_dist))
-    conn.commit()
+    connection.commit()
 
 
 def calculate_distance(cur_data: list) -> int:
@@ -76,7 +74,8 @@ def calculate_distance(cur_data: list) -> int:
     Output => distance between prev gps and cur gps in KM
     '''
     prev_data = get_from_cache(cur_data[3]) #json format from cache
-    prev_data_dict = json.loads(prev_data) #dict format
+    print(type(prev_data))
+    prev_data_dict = prev_data #dict format
     prev_lat = prev_data_dict['location'][0] # prev latitude
     prev_long = prev_data_dict['location'][1] # prev longitude
 
@@ -175,7 +174,7 @@ def rbmq_callback(ch, method, properties, body):
 
     ### Push to db2
     print(data) 
-    push_to_db(data,delta_dist)
+    push_to_db(data,delta_dist,connection)
     print("reached db push")
 
 
