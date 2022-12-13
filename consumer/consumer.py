@@ -65,9 +65,9 @@ def calculate_distance(cur_data: list) -> int:
     Output => distance between prev gps and cur gps in KM
     '''
     prev_data = get_from_cache(cur_data[3]) #json format from cache
-    prev_data_list = json.loads(prev_data) #list format
-    prev_lat = prev_data_list['location'][0] # prev latitude
-    prev_long = prev_data_list['location'][1] # prev longitude
+    prev_data_dict = json.loads(prev_data) #list format
+    prev_lat = prev_data_dict['location'][0] # prev latitude
+    prev_long = prev_data_dict['location'][1] # prev longitude
 
     cur_lat = cur_data[6] # Cur latitude
     cur_long = cur_data[5]# Cur longitude
@@ -83,7 +83,7 @@ def calculate_distance(cur_data: list) -> int:
     r = 6371
       
     # calculate the result
-    return(c * r)
+    return int(c * r)
     
     
 
@@ -115,6 +115,7 @@ def rbmq_callback(ch, method, properties, body: str):
     # call distance function
 
     #push_to_db(data)
+    #value = generate_cache_data() -> has to be in the format of carStatus
     push_to_cache(id, value)
 
 
