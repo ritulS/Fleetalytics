@@ -10,28 +10,81 @@ if (cid == undefined) {
   cid = "check";
 }
 
+//@ts-ignore
+var MARKERS = [];
+
 // fake function for testing
-function fake_get_gps_location(carID: string) {
-  console.log("fake function for get gps info has been clicked");
+async function get_gps_location(carID: string) {
+  var resp = await fetch(`/coordinates?vin=${carID}`);
+  resp = await resp.json();
+  return resp;
 }
 
 function Home() {
   const [carID, update_carid_] = useState(cid);
+  const [counter, updateCounter] = useState(0);
+
+  const plusList = [-1, 1];
+  setTimeout(
+    () => updateCounter(counter + plusList[Math.floor(Math.random() * 2)]),
+    2000
+  );
 
   const update_carID = (carID: string) => {
     update_carid_(carID);
   };
+  //@ts-ignore
+  useEffect(() => {
+    get_gps_location(carID as string).then((new_coordinates) => {
+      delete_markers();
+      set_markers(new_coordinates);
+    });
+  }, [carID, counter]);
 
   return (
     <>
       <NavBar type="home" />
-      <VehicleSearchModal update_carID={fake_get_gps_location} />
+      <VehicleSearchModal update_carID={update_carID} />
     </>
   );
 }
 
 const root = createRoot(document.getElementById("root") as Element);
 root.render(<Home />);
+
+function delete_markers() {
+  //@ts-ignore
+  for (let marker of MARKERS) {
+    //@ts-ignore
+    marker.remove();
+  }
+  MARKERS = [];
+}
+
+function set_markers(new_coordinates: any) {
+  for (let mk in new_coordinates) {
+    // Create a DOM element for each marker.
+    const el = document.createElement("div");
+    const width = 30;
+    const height = 30;
+    el.className = "marker";
+    el.style.backgroundImage = `url(https://cdn-icons-png.flaticon.com/512/446/446075.png)`;
+    el.style.width = `${width}px`;
+    el.style.height = `${height}px`;
+    el.style.backgroundSize = "100%";
+
+    //@ts-ignore 
+    console.log(new_coordinates[mk])
+
+    //@ts-ignore
+    const ll = new mapboxgl.LngLat(new_coordinates[mk][0], new_coordinates[mk][1])
+    //@ts-ignore
+    const marker = new mapboxgl.Marker(el)
+      .setLngLat(ll)
+      .addTo(map);
+    MARKERS.push(marker);
+  }
+}
 
 // setting up mapbox
 //@ts-ignore
