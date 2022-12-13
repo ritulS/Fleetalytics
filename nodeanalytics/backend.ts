@@ -206,7 +206,7 @@ app.post("/analytics", async (req: Request, res: Response) => {
   }
 });
 
-app.get("/fleet", async (req: Request, res: Response) => {
+app.get("/fleet", async (_: Request, res: Response) => {
   try {
     const response = await fleet_query_pgserver();
     res.json({ query: response });

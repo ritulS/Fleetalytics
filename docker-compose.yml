@@ -1,12 +1,14 @@
 version: '3.1'
 services: 
-  rabbitmq3:
-    image: rabbitmq:3.8-management-alpine
+  rabbitmq.broker:
+    image: rabbitmqbroker
     ports: 
         # AMQP protocol port
         - '5672:5672'
         # Rabbit HTTP Management UI
         - '15672:15672'
+    networks:
+      - fbridge
   
   nodeserv:
     image: nodeserv
