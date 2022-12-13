@@ -9,5 +9,7 @@ COPY ./pyproject.toml ./
 RUN pip install poetry
 RUN poetry install 
 
+EXPOSE 5672
+
 CMD [ "poetry", "run", "python", "consumer.py"]
 

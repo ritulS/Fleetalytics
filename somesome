@@ -1,0 +1,7 @@
+cache:
+
+sudo docker build cache -t rediscache
+sudo docker run -p 6379:6379 --network=fbridge --net-alias=redis.cache rediscache
+
+
+
