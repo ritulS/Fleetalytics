@@ -31,7 +31,8 @@ try:
         cursor.execute(batch_str)
         batch_num += 1 
         batch_data = cursor.fetchall()
-        
+        print(type(batch_data))
+        print(batch_data)      
         ##### convert to json
         message = json.dumps(batch_data, default=str)
         # print(type(message))
@@ -45,8 +46,8 @@ try:
 
         time.sleep(3)
 
-        if batch_num > 1:
-            break
+        # if batch_num > 1:
+        #     break
 
     
     time_now = datetime.now().time() # time object

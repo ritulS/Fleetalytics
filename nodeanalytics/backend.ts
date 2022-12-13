@@ -141,13 +141,13 @@ async function interval_query_pgserver(
 
   var cur_iso_date = convert_to_iso_date_format(date, month, year);
 
-  // generating the analytics promises
+  // generating the analytics promises - need to be checked
   for (let i = 1; i < intervals.length; i++) {
     var stval = intervals[i - 1];
     var endval = intervals[i];
     query_promises.push(
       pg_client.query(
-        `SELECT AVG(${field}) FROM car_logs WHERE date = ${cur_iso_date} AND time >= ${stval} AND time < ${endval} AND vin = ${vin}`
+        `SELECT AVG(${field}) FROM car_data WHERE date = ${cur_iso_date} AND time >= ${stval} AND time < ${endval} AND vin = ${vin}`
       )
     );
   }
