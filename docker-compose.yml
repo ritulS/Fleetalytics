@@ -29,13 +29,8 @@ services:
     restart: always
     networks:
       - fbridge
-
-  consumer:
-    image: pyconsumer
-    restart: always
-    networks:
-      - fbridge
-
+    ports:
+      - '6379:6379'
   node.analytics:
     image: nodeanalytics
     restart: always

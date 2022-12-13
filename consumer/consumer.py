@@ -119,9 +119,8 @@ def rbmq_callback(ch, method, properties, body: str):
 
 def connect_to_rbmq_broker():
     #make connection with producer
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq.broker', port=5672))
-    #setup channel with producer
-    print("---dfaljlfdajl---")
+    connection = pika.BlockingConnection(pika.ConnectionParameters())
+    #setup channel with producer 
     channel = connection.channel()
     print("Connection with RMQP established")
     #declaring an exchange
@@ -144,7 +143,7 @@ def connect_to_rbmq_broker():
 
 
 def main():
-    connect_to_redis_cache(host="redis.cache", port=6379, password="hello")
+    connect_to_redis_cache(host="localhost", port=6379, password="hello")
     connect_to_rbmq_broker()
 
 
