@@ -3,7 +3,6 @@ import redis
 import json
 from math import radians, cos, sin, asin, sqrt
 #import mysql.connector
-from sqlalchemy import create_engine
 from datetime import datetime
 import psycopg2
 
