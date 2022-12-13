@@ -6,11 +6,11 @@ import pika
 from datetime import datetime
 import threading
 
-# connection = pika.BlockingConnection(
-#     pika.ConnectionParameters(host='172.26.1.243', port=5672, socket_timeout=2))
-# channel = connection.channel()
+connection = pika.BlockingConnection(
+    pika.ConnectionParameters(host='172.26.1.243', port=5672, socket_timeout=2))
+channel = connection.channel()
 
-# channel.exchange_declare(exchange='logs', exchange_type='fanout')
+channel.exchange_declare(exchange='logs', exchange_type='fanout')
 
 # print("Vin number sent")
 
@@ -32,30 +32,18 @@ try:
         batch_num += 1 
         batch_data = cursor.fetchall()
         print(type(batch_data))
-        print(batch_data)      
-        ##### convert to json
-        message = json.dumps(batch_data, default=str)
-        # print(type(message))
-        # print(message)
-        # jl = json.loads(message)
-        # print(jl)
 
-        ###### send using rmqp
-        #channel.basic_publish(exchange='logs', routing_key='', body=message)
-
+        for i in batch_data:
+            # convert tuple to json
+            message = json.dumps(i, default=str)
+            ###### send using rmqp
+            channel.basic_publish(exchange='logs', routing_key='', body=message)
 
         time.sleep(3)
 
         # if batch_num > 1:
         #     break
 
-    
-    time_now = datetime.now().time() # time object
-
-    # threading to query every n seconds
-    sn = 0
-    #message = json.dumps(row, default=str)
-            
 
 
     # connection.close()

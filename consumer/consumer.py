@@ -50,7 +50,7 @@ def push_to_db(data:list,connection):
     [1, "02-12-2019", "10:04:53", "A41121", 460.0, -22.98354, -43.217812, 0.0, "D", 02-12-2019, 10:04:53] 
     '''
     res = cursor.execute("INSERT INTO bus_data (sr_num, date0, time0, vin, \
-        route, latitude, longitude, speed, type, date, time ) VALUES(%s, %s, %s)"\
+        route, latitude, longitude, speed, type, date, time ) VALUES(%s, %s, %s,%s, %s, %s, %s, %s, %s,%s, %s)"\
         , (data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7],\
              data[8], data[9], data[10]))
 
