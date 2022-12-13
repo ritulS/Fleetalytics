@@ -4,5 +4,6 @@ ENV POSTGRES_PASSWORD=password
 ENV POSTGRES_DB=postgres
 
 WORKDIR /docker-entrypoint-initdb.d
+EXPOSE 5432
 
 COPY ./init-db.sh ./
