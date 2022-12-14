@@ -145,11 +145,33 @@ async function interval_query_pgserver(
 
   // generating the analytics promises - need to be checked
   if (field == "delta_d"){
-        query_promises.push()
-  } else {
-        query_promises.push()
-  }
+        query_promises.push(pg_client.query(
+    `SELECT vin, SUM(delta_d) AS sum, WHERE date = current_date and vin = ${vin} and time > LOCALTIME(0) - INTERVAL '15 minutes'`
+  ));
 
+query_promises.push(pg_client.query(
+    `SELECT vin, SUM(delta_d) AS sum, WHERE date = current_date and vin = ${vin} and time > LOCALTIME(0) - INTERVAL '30 minutes'`
+  ));
+
+query_promises.push(pg_client.query(
+    `SELECT vin, SUM(delta_d) AS sum, WHERE date = current_date and vin = ${vin} and time > LOCALTIME(0) - INTERVAL '45 minutes'`
+  ));
+
+  } else {
+        query_promises.push(pg_client.query(
+    `SELECT vin, AVG(speed) AS sum, WHERE date = current_date and vin = ${vin} and time > LOCALTIME(0) - INTERVAL '15 minutes'`
+  ));
+
+query_promises.push(pg_client.query(
+    `SELECT vin, AVG(speed) AS sum, WHERE date = current_date and vin = ${vin} and time > LOCALTIME(0) - INTERVAL '15 minutes'`
+  ));
+
+query_promises.push(pg_client.query(
+    `SELECT vin, AVG(speed) AS sum, WHERE date = current_date and vin = ${vin} and time > LOCALTIME(0) - INTERVAL '15 minutes'`
+  ));
+
+
+  }
   var query_results = await Promise.all(query_promises); 
   const ret_results = {};
 
@@ -197,15 +219,15 @@ function get_fuel_used(distance: number, type:string): number {
  *
  */
 async function fleet_query_pgserver() {
-  const intervals = generate_query_intervals("hr"); 
-  console.log(intervals)
+  //const intervals = generate_query_intervals("hr"); 
+  //console.log(intervals)
 
-  const hour_2_interval = intervals[-3];
-  var cur_date = new Date();
-  var year = cur_date.getFullYear();
-  var month = cur_date.getMonth();
-  var date = cur_date.getDate();
-  var cur_iso_date = convert_to_iso_date_format(date, month, year);
+  //const hour_2_interval = intervals[-3];
+  //var cur_date = new Date();
+  //var year = cur_date.getFullYear();
+  //var month = cur_date.getMonth();
+  //var date = cur_date.getDate();
+  //var cur_iso_date = convert_to_iso_date_format(date, month, year);
 
   var result = await pg_client.query(
     "SELECT type, SUM(delta_d) AS sum, COUNT(1) AS total FROM bus_data WHERE date = current_date GROUP BY type"
