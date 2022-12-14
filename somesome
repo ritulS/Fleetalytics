@@ -7,8 +7,13 @@ sudo docker run -p 6379:6379 --network=fbridge --net-alias=redis.cache rediscach
 
 db1:
 
-CREATE TABLE bus_data(sr_num INT NOT NULL, date0 CHAR(50) NOT NULL, time0 CHAR(30) NOT NULL, vin CHAR(10) NOT NULL, route FLOAT NOT NULL, latitude FLOAT, longitude FLOAT, speed FLOAT, type CHAR(5) NOT NULL);
+# CREATE TABLE bus_data(sr_num INT NOT NULL, date0 CHAR(50) NOT NULL, time0 CHAR(30) NOT NULL, vin CHAR(10) NOT NULL, route FLOAT NOT NULL, latitude FLOAT, longitude FLOAT, speed FLOAT, type CHAR(5) NOT NULL);
 
 db2:
 
-CREATE TABLE bus_data(sr_num INT NOT NULL, date0 CHAR(50) NOT NULL, time0 CHAR(30) NOT NULL, vin CHAR(10) NOT NULL, route INT NOT NULL, latitude FLOAT, longitude FLOAT, speed FLOAT, type CHAR(5) NOT NULL, date DATE NOT NULL, time TIME NOT NULL, delta_d FLOAT NOT NULL );
+# CREATE TABLE bus_data(sr_num INT NOT NULL, date0 CHAR(50) NOT NULL, time0 CHAR(30) NOT NULL, vin CHAR(10) NOT NULL, route INT NOT NULL, latitude FLOAT, longitude FLOAT, speed FLOAT, type CHAR(5) NOT NULL, date DATE NOT NULL, time TIME NOT NULL, delta_d FLOAT NOT NULL );
+
+
+Analytics interval query:
+
+# SELECT SUM(delta_d) FROM bus_data WHERE `Date` > NOW() - INTERVAL 15 MINUTE

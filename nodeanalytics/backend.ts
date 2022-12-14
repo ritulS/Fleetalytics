@@ -144,13 +144,15 @@ async function interval_query_pgserver(
 
   var cur_iso_date = convert_to_iso_date_format(date, month, year);
 
-  // generating the analytics promises - need to be checked
+  // generating the analytics promises - need to be checked # field => dist or speed
+  // interval 15 min: SELECT SUM(delta_d) FROM bus_data WHERE `Date` > NOW() - INTERVAL 15 MINUTE
+
   for (let i = 1; i < intervals.length; i++) {
     var stval = intervals[i - 1];
     var endval = intervals[i];
     query_promises.push(
       pg_client.query(
-        `SELECT AVG(${field}) AS avg FROM bus_data WHERE date = current_date AND time >= $1 AND time < $2 AND vin = $3`,
+        `SELECT SUM(${field}) AS avg FROM bus_data WHERE date = current_date AND time >= $1 AND time < $2 AND vin = $3`,
         [stval, endval, vin]
       )
     );
