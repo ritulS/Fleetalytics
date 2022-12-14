@@ -5,7 +5,7 @@ import cors from "cors";
 
 const CARS = cars_json["cars"];
 
-const searcher = new FuzzySearch(CARS, ["id"], {
+const searcher = new FuzzySearch(CARS, ["vin"], {
   caseSensitive: false,
   sort: true,
 });

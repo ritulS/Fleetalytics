@@ -28,8 +28,8 @@ def add_cur_date_time(row: list):
   # time format: HH:MI:SS
   cur_date = datetime.today().strftime('%Y-%m-%d')
   cur_time = datetime.now().strftime("%H:%M:%S")
-  del row[-1]
-  del row[-1]  
+  #del row[-1]
+  #del row[-1]  
   row.append(cur_date)
   row.append(cur_time)
 
@@ -40,7 +40,7 @@ try:
   # Connect with local postgres DB
   # print('before conn')
   conn = psycopg2.connect(
-    "dbname='db1' user='postgres' password='postgres' host='localhost'")
+    "dbname='postgres' user='postgres' password='postgres' host='localhost'")
   print('Connected to DB 1')
   cursor = conn.cursor()
 
@@ -73,8 +73,8 @@ try:
 
     time.sleep(3)
 
-    # if batch_num > 1:
-    #   break
+    if batch_num > 3:
+       break
 
   connection.close()
 

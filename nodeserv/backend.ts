@@ -21,10 +21,10 @@ const COORDINATE_CACHE: any = {};
 
 async function get_status_from_cache_at_interval() {
   for (let vin of VINS) {
-    let data = await redisclient.get(vin["id"]);
+    let data = await redisclient.get(vin["vin"]);
     if (data != null) {
       data = JSON.parse(data);
-      COORDINATE_CACHE[vin["id"]] = (data as any)["coordinates"] as [
+      COORDINATE_CACHE[vin["vin"]] = (data as any)["coordinates"] as [
         number,
         number
       ];
@@ -65,7 +65,7 @@ app.get("/car_status/:vin", async (req: Request, res: Response) => {
   }
 });
 
-// fake analytics route
+// analytics route
 app.get(
   "/analytics/:vin/:field/:interval",
   async (req: Request, res: Response) => {
@@ -93,6 +93,7 @@ app.get(
 
     const req_proxy = http.request(options);
     req_proxy.write(post_data_json);
+    req_proxy.end()
     req_proxy.on("response", (response) => response.pipe(res));
   }
 );
@@ -100,19 +101,23 @@ app.get(
 app.get("/fleet", (_: Request, res: Response) => {
   const options = {
     port: 8082,
-    host: "node.analytics",
+    host: "localhost",
     method: "GET",
     path: "/fleet",
   };
 
-  //const req_proxy = http.request(options);
-  //req_proxy.on("response", (response) => response.pipe(res));
-  res.json({
-    miniBus: { fuel: 0, distance: 0, number_of_bus: 0 },
-    doubleDecker: { fuel: 0, distance: 0, number_of_bus: 0 },
-    coach: { fuel: 0, distance: 0, number_of_bus: 0 },
-    express: { fuel: 0, distance: 0, number_of_bus: 0 },
-  });
+  console.log("received")
+
+  const req_proxy = http.request(options);
+  req_proxy.end()
+  req_proxy.on("response", (response) => response.pipe(res));
+ 
+  //res.json({
+  //  miniBus: { fuel: 0, distance: 0, number_of_bus: 0 },
+   // doubleDecker: { fuel: 0, distance: 0, number_of_bus: 0 },
+   // coach: { fuel: 0, distance: 0, number_of_bus: 0 },
+   // express: { fuel: 0, distance: 0, number_of_bus: 0 },
+ // });
 });
 
 app.get("/search", (req: Request, res: Response) => {

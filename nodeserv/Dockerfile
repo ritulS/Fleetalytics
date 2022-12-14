@@ -8,6 +8,7 @@ MAINTAINER AlfredDaimari
 COPY package.json ./
 COPY yarn.lock ./
 COPY tsconfig.json ./
+COPY cars.json ./
 
 RUN npm install yarn
 RUN npx yarn install

@@ -96,7 +96,7 @@ function generate_query_intervals(type: string): string[] {
 
   if (type == "hr") {
     // generating query intervals for hours
-    for (let i = Math.max(0, cur_hour - 12); i < cur_hour; i--) {
+    for (let i = Math.max(0, cur_hour - 12); i < cur_hour; i++) {
       intervals.push(convert_to_iso_time_format(i, cur_minutes, cur_seconds));
     }
   } else {
@@ -117,6 +117,8 @@ function generate_query_intervals(type: string): string[] {
         min_st = 0;
       }
       intervals.push(convert_to_iso_time_format(st, min_st, cur_seconds));
+
+      count += 1
     }
   }
 
@@ -148,7 +150,8 @@ async function interval_query_pgserver(
     var endval = intervals[i];
     query_promises.push(
       pg_client.query(
-        `SELECT AVG(${field}) AS avg FROM bus_data WHERE date = $1 AND time >= $2 AND time < $3 AND vin = $4`, [cur_iso_date, stval, endval, vin]
+        `SELECT AVG(${field}) AS avg FROM bus_data WHERE date = current_date AND time >= $1 AND time < $2 AND vin = $3`,
+        [stval, endval, vin]
       )
     );
   }
@@ -176,10 +179,21 @@ async function interval_query_pgserver(
 }
 
 function get_bus_type(typeInDB: string): string {
-  return "";
+  if (typeInDB == "M") {
+    return "miniBus";
+  }
+
+  if (typeInDB == "D") {
+    return "doubleDecker";
+  }
+  if (typeInDB == "E") {
+    return "express";
+  }
+
+  return "coach";
 }
 
-function get_fuel_used(distance: number): number {
+function get_fuel_used(distance: number, type:string): number {
   return 0;
 }
 
@@ -189,7 +203,9 @@ function get_fuel_used(distance: number): number {
  *
  */
 async function fleet_query_pgserver() {
-  const intervals = generate_query_intervals("hr");
+  const intervals = generate_query_intervals("hr"); 
+  console.log(intervals)
+
   const hour_2_interval = intervals[-3];
   var cur_date = new Date();
   var year = cur_date.getFullYear();
@@ -198,43 +214,46 @@ async function fleet_query_pgserver() {
   var cur_iso_date = convert_to_iso_date_format(date, month, year);
 
   var result = await pg_client.query(
-    `SELECT type, SUM(delta_d) AS sum, COUNT(*) AS total FROM bus_data WHERE date = $1 AND time >= $2 GROUP BY type`, [cur_iso_date, hour_2_interval]
+    "SELECT type, SUM(delta_d) AS sum, COUNT(1) AS total FROM bus_data WHERE date = current_date GROUP BY type"
   );
 
-  console.log(result);
-  var miniBus = {};
-  var doubleDecker = {};
-  var coach = {};
-  var express = {};
+  console.log(result.rows);
+  var miniBus = {fuel:0, distance:0, number_of_bus:0};
+  var doubleDecker = {fuel:0, distance:0, number_of_bus:0};
+  var coach = {fuel:0, distance:0, number_of_bus:0};
+  var express = {fuel:0, distance:0, number_of_bus:0};
 
-  for (let bus in result) {
-    if (get_bus_type((bus as any)["type"]) == "miniBus") {
+
+  for (let bus of result.rows) {
+    console.log(bus)
+
+    if (get_bus_type((bus as any)["type"].trim()) == "miniBus") {
       miniBus = {
-        fuel: get_fuel_used((bus as any)["sum"]),
+        fuel: get_fuel_used((bus as any)["sum"], (bus as any)["type"].trim()),
         distance: (bus as any)["sum"],
         number_of_bus: (bus as any)["total"],
       };
     }
 
-    if (get_bus_type((bus as any)["type"]) == "doubleDecker") {
+    if (get_bus_type((bus as any)["type"].trim()) == "doubleDecker") {
       doubleDecker = {
-        fuel: get_fuel_used((bus as any)["sum"]),
+        fuel: get_fuel_used((bus as any)["sum"], (bus as any)["type"].trim()),
         distance: (bus as any)["sum"],
         number_of_bus: (bus as any)["total"],
       };
     }
 
-    if (get_bus_type((bus as any)["type"]) == "coach") {
+    if (get_bus_type((bus as any)["type"].trim()) == "coach") {
       coach = {
-        fuel: get_fuel_used((bus as any)["sum"]),
+        fuel: get_fuel_used((bus as any)["sum"], (bus as any)["type"].trim()),
         distance: (bus as any)["sum"],
         number_of_bus: (bus as any)["total"],
       };
     }
 
-    if (get_bus_type((bus as any)["type"]) == "express") {
+    if (get_bus_type((bus as any)["type"].trim()) == "express") {
       express = {
-        fuel: get_fuel_used((bus as any)["sum"]),
+        fuel: get_fuel_used((bus as any)["sum"], (bus as any)["type"].trim()),
         distance: (bus as any)["sum"],
         number_of_bus: (bus as any)["total"],
       };
@@ -247,6 +266,8 @@ async function fleet_query_pgserver() {
     coach,
     express,
   };
+
+  return ret_results
 }
 
 const app: Express = express();
@@ -296,6 +317,7 @@ app.post("/analytics", async (req: Request, res: Response) => {
 
 app.get("/fleet", async (_: Request, res: Response) => {
   try {
+    console.log("query received")
     const response = await fleet_query_pgserver();
     res.json(response);
   } catch (e) {
