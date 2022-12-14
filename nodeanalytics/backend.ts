@@ -147,7 +147,7 @@ async function interval_query_pgserver(
     var endval = intervals[i];
     query_promises.push(
       pg_client.query(
-        `SELECT AVG(${field}) AS avg FROM bus_data WHERE date = ${cur_iso_date} AND time >= ${stval} AND time < ${endval} AND vin = ${vin}`
+        `SELECT AVG(${field}) AS avg FROM bus_data WHERE date = $1 AND time >= $2 AND time < $3 AND vin = $4`, [cur_iso_date, stval, endval, vin]
       )
     );
   }
@@ -197,7 +197,7 @@ async function fleet_query_pgserver() {
   var cur_iso_date = convert_to_iso_date_format(date, month, year);
 
   var result = await pg_client.query(
-    `SELECT type, SUM(distance) AS sum, COUNT(*) AS total FROM bus_data WHERE date = ${cur_iso_date} AND time >= ${hour_2_interval} GROUP BY type`
+    `SELECT type, SUM(delta_d) AS sum, COUNT(*) AS total FROM bus_data WHERE date = $1 AND time >= $2 GROUP BY type`, [cur_iso_date, hour_2_interval]
   );
 
   console.log(result);

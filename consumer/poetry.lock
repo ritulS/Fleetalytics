@@ -7,6 +7,34 @@ optional = false
 python-versions = ">=3.6"
 
 [[package]]
+name = "geographiclib"
+version = "2.0"
+description = "The geodesic routines from GeographicLib"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[[package]]
+name = "geopy"
+version = "2.3.0"
+description = "Python Geocoding Toolbox"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+geographiclib = ">=1.52,<3"
+
+[package.extras]
+aiohttp = ["aiohttp"]
+dev = ["coverage", "flake8 (>=5.0,<5.1)", "isort (>=5.10.0,<5.11.0)", "pytest (>=3.10)", "pytest-asyncio (>=0.17)", "readme-renderer", "sphinx (<=4.3.2)", "sphinx-issues", "sphinx-rtd-theme (>=0.5.0)"]
+dev-docs = ["readme-renderer", "sphinx (<=4.3.2)", "sphinx-issues", "sphinx-rtd-theme (>=0.5.0)"]
+dev-lint = ["flake8 (>=5.0,<5.1)", "isort (>=5.10.0,<5.11.0)"]
+dev-test = ["coverage", "pytest (>=3.10)", "pytest-asyncio (>=0.17)", "sphinx (<=4.3.2)"]
+requests = ["requests (>=2.16.2)", "urllib3 (>=1.24.2)"]
+timezone = ["pytz"]
+
+[[package]]
 name = "packaging"
 version = "21.3"
 description = "Core utilities for Python packages"
@@ -67,13 +95,21 @@ ocsp = ["cryptography (>=36.0.1)", "pyopenssl (==20.0.1)", "requests (>=2.26.0)"
 
 [metadata]
 lock-version = "1.1"
-python-versions = "^3.9"
-content-hash = "e89998613e7f50a60487fb38ff1b5c1efbf7a43bdf961e4b9a4204d6bb1ab208"
+python-versions = "^3.8"
+content-hash = "a0df829e37847e3844f971ef3564b1901b14ee2566ac6a8fb2bc3d6a5f45ab81"
 
 [metadata.files]
 async-timeout = [
     {file = "async-timeout-4.0.2.tar.gz", hash = "sha256:2163e1640ddb52b7a8c80d0a67a08587e5d245cc9c553a74a847056bc2976b15"},
     {file = "async_timeout-4.0.2-py3-none-any.whl", hash = "sha256:8ca1e4fcf50d07413d66d1a5e416e42cfdf5851c981d679a09851a6853383b3c"},
+]
+geographiclib = [
+    {file = "geographiclib-2.0-py3-none-any.whl", hash = "sha256:6b7225248e45ff7edcee32becc4e0a1504c606ac5ee163a5656d482e0cd38734"},
+    {file = "geographiclib-2.0.tar.gz", hash = "sha256:f7f41c85dc3e1c2d3d935ec86660dc3b2c848c83e17f9a9e51ba9d5146a15859"},
+]
+geopy = [
+    {file = "geopy-2.3.0-py3-none-any.whl", hash = "sha256:4a29a16d41d8e56ba8e07310802a1cbdf098eeb6069cc3d6d3068fc770629ffc"},
+    {file = "geopy-2.3.0.tar.gz", hash = "sha256:228cd53b6eef699b2289d1172e462a90d5057779a10388a7366291812601187f"},
 ]
 packaging = [
     {file = "packaging-21.3-py3-none-any.whl", hash = "sha256:ef103e05f519cdc783ae24ea4e2e0f508a9c99b2d4969652eed6a2e1ea5bd522"},

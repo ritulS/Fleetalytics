@@ -12,6 +12,7 @@ redis = "^4.3.5"
 
 # for pyright neovim config
 psycopg2 = "^2.9.5"
+geopy = "^2.3.0"
 [tool.pyright]
 venvPath = "."
 venv = ".venv"

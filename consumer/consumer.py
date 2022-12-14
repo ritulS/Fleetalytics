@@ -172,6 +172,7 @@ def rbmq_callback(ch, method, properties, body):
     data = json.loads(body_str)
     #print(type(data))
     ### Calculate delta dist
+    print(data)
     delta_dist = 0
     vin = data[3]
     if REDIS.get(vin) == None:
