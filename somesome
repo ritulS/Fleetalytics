@@ -16,4 +16,6 @@ db2:
 
 Analytics interval query:
 
-# SELECT SUM(delta_d) FROM bus_data WHERE `Date` > NOW() - INTERVAL 15 MINUTE
+# SELECT SUM(delta_d) FROM bus_data WHERE time > LOCALTIME(0) - INTERVAL 15 MINUTE
+
+# SELECT SUM(speed) FROM bus_data WHERE time > LOCALTIME(0) - INTERVAL 15 MINUTE
