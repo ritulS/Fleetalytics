@@ -76,8 +76,8 @@ def calculate_distance(cur_data: list) -> int:
     prev_data = get_from_cache(cur_data[3]) #json format from cache
     print(type(prev_data))
     prev_data_dict = prev_data #dict format
-    prev_lat = prev_data_dict['location'][0] # prev latitude
-    prev_long = prev_data_dict['location'][1] # prev longitude
+    prev_lat = prev_data_dict['location'][1] # prev latitude
+    prev_long = prev_data_dict['location'][0] # prev longitude
 
     cur_lat = cur_data[6] # Cur latitude
     cur_long = cur_data[5]# Cur longitude
