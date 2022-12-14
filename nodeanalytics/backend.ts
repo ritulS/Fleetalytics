@@ -133,7 +133,6 @@ function generate_query_intervals(type: string): string[] {
  */
 async function interval_query_pgserver(
   vin: string,
-  intervals: string[],
   field: string
 ) {
   var query_promises = [];
@@ -145,31 +144,26 @@ async function interval_query_pgserver(
   var cur_iso_date = convert_to_iso_date_format(date, month, year);
 
   // generating the analytics promises - need to be checked
-  for (let i = 1; i < intervals.length; i++) {
-    var stval = intervals[i - 1];
-    var endval = intervals[i];
-    query_promises.push(
-      pg_client.query(
-        `SELECT AVG(${field}) AS avg FROM bus_data WHERE date = current_date AND time >= $1 AND time < $2 AND vin = $3`,
-        [stval, endval, vin]
-      )
-    );
+  if (field == "delta_d"){
+        query_promises.push()
+  } else {
+        query_promises.push()
   }
 
-  var results = await Promise.all(query_promises);
-  console.log(results);
+  var query_results = await Promise.all(query_promises); 
   const ret_results = {};
 
   // @ts-ignore
-  ret_results["labels"] = intervals.splice(1);
+  ret_results["labels"] = ["< 15 mins", "< 30 mins", "< 45 mins"]
 
   var label = field;
   var borderWidth = 1;
   var data = [];
 
-  for (let r of results) {
+  for (let results of query_results) {
+    console.log(results.rows)
     // @ts-ignore
-    data.push(r["avg"]);
+    data.push(results.rows[0]["avg"]);
   }
 
   //@ts-ignore
