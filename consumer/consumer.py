@@ -138,10 +138,11 @@ def avg_speed_dist(ndata:list):
     ### Avg Distance Calc
     FMT = '%H:%M:%S'
     tdelta = datetime.strptime(cur_time, FMT) - datetime.strptime(prev_time, FMT)
-    tdelta_in_minutes = tdelta.total_seconds() / 60
+    tdelta_in_hours = tdelta.total_seconds() / (60*60)
+    
 
-    m = (12*60) - tdelta_in_minutes
-    avg_dist = m * ((prev_avg_dist + delta_dist)/(12*60))
+    m = 12 - tdelta_in_hours
+    avg_dist = (prev_avg_dist * m + delta_dist)/(12)
 
     ### Avg Speed Calc
     # elapsed_time = (12*60) - 
@@ -179,7 +180,7 @@ def rbmq_callback(ch, method, properties, body):
         print("reached null place")
     else:
 
-        delta_dist = calculate_distance(data)
+        delta_dist = calculate_distance(data)# units: KM
         print("Delta dist calculated")
         ### Calculate avg distance
         avg_dist = avg_speed_dist(data)
