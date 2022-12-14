@@ -21,7 +21,7 @@ const pg_client = new pg.Client({
   host: "postgres.database",
   port: 5432,
   password: "password",
-  user: "node_analytics",
+  user: "log",
 });
 
 pg_client
@@ -84,7 +84,7 @@ function convert_to_iso_date_format(
 }
 
 // for now only gets intervals for current date
-function generate_query_intervals(type: String): string[] {
+function generate_query_intervals(type: string): string[] {
   const cur_date = new Date();
 
   var cur_hour = cur_date.getHours();
@@ -147,13 +147,39 @@ async function interval_query_pgserver(
     var endval = intervals[i];
     query_promises.push(
       pg_client.query(
-        `SELECT AVG(${field}) FROM bus_data WHERE date = ${cur_iso_date} AND time >= ${stval} AND time < ${endval} AND vin = ${vin}`
+        `SELECT AVG(${field}) AS avg FROM bus_data WHERE date = ${cur_iso_date} AND time >= ${stval} AND time < ${endval} AND vin = ${vin}`
       )
     );
   }
 
   var results = await Promise.all(query_promises);
-  return results;
+  console.log(results);
+  const ret_results = {};
+
+  // @ts-ignore
+  ret_results["labels"] = intervals.splice(1);
+
+  var label = field;
+  var borderWidth = 1;
+  var data = [];
+
+  for (let r of results) {
+    // @ts-ignore
+    data.push(r["avg"]);
+  }
+
+  //@ts-ignore
+  ret_results["datasets"] = [{ label, data, borderWidth }];
+  console.log(ret_results);
+  return ret_results;
+}
+
+function get_bus_type(typeInDB: string): string {
+  return "";
+}
+
+function get_fuel_used(distance: number): number {
+  return 0;
 }
 
 /**
@@ -161,7 +187,66 @@ async function interval_query_pgserver(
  *@description Function for querying server for fleet data of all
  *
  */
-async function fleet_query_pgserver() {}
+async function fleet_query_pgserver() {
+  const intervals = generate_query_intervals("hr");
+  const hour_2_interval = intervals[-3];
+  var cur_date = new Date();
+  var year = cur_date.getFullYear();
+  var month = cur_date.getMonth();
+  var date = cur_date.getDate();
+  var cur_iso_date = convert_to_iso_date_format(date, month, year);
+
+  var result = await pg_client.query(
+    `SELECT type, SUM(distance) AS sum, COUNT(*) AS total FROM bus_data WHERE date = ${cur_iso_date} AND time >= ${hour_2_interval} GROUP BY type`
+  );
+
+  console.log(result);
+  var miniBus = {};
+  var doubleDecker = {};
+  var coach = {};
+  var express = {};
+
+  for (let bus in result) {
+    if (get_bus_type((bus as any)["type"]) == "miniBus") {
+      miniBus = {
+        fuel: get_fuel_used((bus as any)["sum"]),
+        distance: (bus as any)["sum"],
+        number_of_bus: (bus as any)["total"],
+      };
+    }
+
+    if (get_bus_type((bus as any)["type"]) == "doubleDecker") {
+      doubleDecker = {
+        fuel: get_fuel_used((bus as any)["sum"]),
+        distance: (bus as any)["sum"],
+        number_of_bus: (bus as any)["total"],
+      };
+    }
+
+    if (get_bus_type((bus as any)["type"]) == "coach") {
+      coach = {
+        fuel: get_fuel_used((bus as any)["sum"]),
+        distance: (bus as any)["sum"],
+        number_of_bus: (bus as any)["total"],
+      };
+    }
+
+    if (get_bus_type((bus as any)["type"]) == "express") {
+      express = {
+        fuel: get_fuel_used((bus as any)["sum"]),
+        distance: (bus as any)["sum"],
+        number_of_bus: (bus as any)["total"],
+      };
+    }
+  }
+
+  const ret_results = {
+    miniBus,
+    doubleDecker,
+    coach,
+    express,
+  };
+}
 
 const app: Express = express();
 app.use(cors());
@@ -200,7 +285,9 @@ app.post("/analytics", async (req: Request, res: Response) => {
     const vin: string = req.body["vin"];
     var intervals = generate_query_intervals(type);
     const response = await interval_query_pgserver(vin, intervals, field);
-    res.json({ query: response });
+
+    console.log(response);
+    res.json({ response });
   } catch (e) {
     res.json({ error: { type: (e as Object).toString() } });
   }
@@ -209,7 +296,7 @@ app.post("/analytics", async (req: Request, res: Response) => {
 app.get("/fleet", async (_: Request, res: Response) => {
   try {
     const response = await fleet_query_pgserver();
-    res.json({ query: response });
+    res.json(response);
   } catch (e) {
     res.json({ error: { type: (e as Object).toString() } });
   }
