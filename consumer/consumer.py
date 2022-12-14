@@ -162,7 +162,7 @@ def rbmq_callback(ch, method, properties, body):
     Prod format: [sr_num, date0, time0, vin,route, latitude, longitude, speed, type, date, time] 
     Prod format example: [1, "02-12-2019", "10:04:53", "A41121", 460.0, -22.98354, -43.217812, 0.0, "D", 02-12-2019, 10:04:53] 
     '''
-    print(type(body))
+    #print(type(body))
     #print(" [x] Received %r" % body)
     # body_arr = body.split(':')
     # id = body_arr[0]
@@ -170,7 +170,7 @@ def rbmq_callback(ch, method, properties, body):
     # convert json to py list
     body_str = codecs.decode(body,'UTF-8')
     data = json.loads(body_str)
-    print(type(data))
+    #print(type(data))
     ### Calculate delta dist
     delta_dist = 0
     vin = data[3]
