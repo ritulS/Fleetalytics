@@ -29,13 +29,12 @@ interface VehicleSearchModalProps {
 
 interface VehicleStatusCompProps {
   info: {
-    cid: string;
+    vin: string;
     fuel: number;
     speed: number;
     location: [number, number];
     avg_distance: number;
-    avg_speed: number;
-  };
+};
 }
 
 function VehicleSearchBtn() {
@@ -304,7 +303,7 @@ export function VehicleSearchModal(props: VehicleSearchModalProps) {
         <div className="modal-content">
           <div className="modal-header">
             <h1 className="modal-title fs-5" id="vehicleSearchModalLabel">
-              search vehicle by id?
+              search vehicle by vin?
             </h1>
             <button
               type="button"
@@ -314,7 +313,7 @@ export function VehicleSearchModal(props: VehicleSearchModalProps) {
             ></button>
           </div>
           <div className="modal-body">
-            <p>enter vehicle id?</p>
+            <p>enter vehicle vin?</p>
             <VehicleSearchModalInput setSearch={setSearch} />
             <VehicleSearchModalList
               carList={carList as unknown as [carIdInterface]}
@@ -350,7 +349,7 @@ export function VehicleStatusComp(props: VehicleStatusCompProps) {
       <h3 className="text-center text-green-500 underline underline-offset-4">
         car status
       </h3>
-      <h4>car_id: {props.info.cid}</h4>
+      <h4>car_id: {props.info.vin}</h4>
       <h4>fuel: {props.info.fuel}</h4>
       <h4>current speed: {props.info.speed}</h4>
       <h4>
@@ -358,7 +357,6 @@ export function VehicleStatusComp(props: VehicleStatusCompProps) {
         {props.info.location[0] + "," + props.info.location[1]}
       </h4>
       <h4>avg distance covered: {props.info.avg_distance}</h4>
-      <h4>avg speed: {props.info.avg_speed}</h4>
     </div>
   );
 }

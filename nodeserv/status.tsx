@@ -9,6 +9,9 @@ if (cid == undefined) {
   cid = "check";
 }
 
+
+var MARKER:any
+
 // object for sharing car status between the two react components
 
 const StatusRedux = {
@@ -23,14 +26,14 @@ const StatusRedux = {
   updateCarStatus: () => console.log("default updateCarStatusCalled"),
 };
 
-async function get_car_status(id: string) {
-  var res = await fetch(`/car_status/${id}`);
+async function get_car_status(vin: string) {
+  var res = await fetch(`/car_status/${vin}`);
   res = await res.json();
   return res;
 }
 
 function StatusNav() {
-  const [carID, update_carid_] = useState(cid);
+  const [vin, update_carvin_] = useState(cid);
   const [counter, updateCounter] = useState(0);
   const plusList = [-1, 1];
 
@@ -40,15 +43,17 @@ function StatusNav() {
   );
 
   useEffect(() => {
-    get_car_status(carID as string).then((res) => {
+    get_car_status(vin as string).then((res) => {
       StatusRedux.carStatus = res as any;
       //@ts-ignore
       StatusRedux.updateCarStatus();
+       delete_marker()
+       set_marker((res as any)["coordinates"] as [number, number])
     });
-  }, [carID, counter]);
+  }, [vin, counter]);
 
-  const update_carID = (carID: string) => {
-    update_carid_(carID);
+  const update_carID = (vin: string) => {
+    update_carvin_(vin);
   };
   //@ts-ignore
   return (
@@ -82,6 +87,36 @@ const status = createRoot(document.getElementById("status") as Element);
 
 root.render(<StatusNav />);
 status.render(<StatusDisp />);
+
+function set_marker(new_coordinate:[number, number]){
+// Create a DOM element for each marker.
+    const el = document.createElement("div");
+    const width = 30;
+    const height = 30;
+    el.className = "marker";
+    el.style.backgroundImage = `url(https://cdn-icons-png.flaticon.com/512/446/446075.png)`;
+    el.style.width = `${width}px`;
+    el.style.height = `${height}px`;
+    el.style.backgroundSize = "100%";
+        
+    console.log(new_coordinate)
+
+    //@ts-ignore
+    const ll = new mapboxgl.LngLat(new_coordinate[0], new_coordinate[1])
+    //@ts-ignore
+    const marker = new mapboxgl.Marker(el)
+      .setLngLat(ll)
+      .addTo(map);
+
+    MARKER = marker;
+}
+
+function delete_marker(){
+        MARKER.remove()
+        MARKER = undefined
+}
+
+
 
 // setting up mapbox
 //@ts-ignore
