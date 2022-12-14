@@ -38,7 +38,7 @@ async function draw_chart(cfg: any) {
 }
 
 async function get_car_analytics(carID: string, param: string, time: string) {
-  var res = await fetch(`/analytics/${carID}/${param}/${time}`);
+  var res = await fetch(`/analytics/${carID}/${param}/day`);
   res = await res.json();
   return res;
 }

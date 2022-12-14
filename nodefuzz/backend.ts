@@ -18,6 +18,7 @@ app.use(cors());
 // fuzzy searching for the car id
 app.get("/search", (req: Request, res: Response) => {
   const searchTerm: string = req.query.q as string;
+  console.log(searchTerm)
   res.json({ carList: searcher.search(searchTerm).splice(0, 4) });
 });
 

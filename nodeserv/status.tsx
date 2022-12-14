@@ -9,8 +9,8 @@ if (cid == undefined) {
   cid = "check";
 }
 
-
-var MARKER:any
+// @ts-ignore
+var MARKERS = [];
 
 // object for sharing car status between the two react components
 
@@ -28,8 +28,11 @@ const StatusRedux = {
 
 async function get_car_status(vin: string) {
   var res = await fetch(`/car_status/${vin}`);
+  var coordinates = await fetch(`/coordinates?vin=${vin}`)
   res = await res.json();
-  return res;
+  coordinates = await coordinates.json()
+  console.log(coordinates)
+  return [res, coordinates];
 }
 
 function StatusNav() {
@@ -44,11 +47,11 @@ function StatusNav() {
 
   useEffect(() => {
     get_car_status(vin as string).then((res) => {
-      StatusRedux.carStatus = res as any;
+      StatusRedux.carStatus = res[0] as any;
       //@ts-ignore
       StatusRedux.updateCarStatus();
-       delete_marker()
-       set_marker((res as any)["coordinates"] as [number, number])
+       delete_markers()
+       set_markers(res[1] as any)
     });
   }, [vin, counter]);
 
@@ -88,8 +91,9 @@ const status = createRoot(document.getElementById("status") as Element);
 root.render(<StatusNav />);
 status.render(<StatusDisp />);
 
-function set_marker(new_coordinate:[number, number]){
-// Create a DOM element for each marker.
+function set_markers(new_coordinates: any) {
+  for (let mk in new_coordinates) {
+    // Create a DOM element for each marker.
     const el = document.createElement("div");
     const width = 30;
     const height = 30;
@@ -98,25 +102,28 @@ function set_marker(new_coordinate:[number, number]){
     el.style.width = `${width}px`;
     el.style.height = `${height}px`;
     el.style.backgroundSize = "100%";
-        
-    console.log(new_coordinate)
+
+    //@ts-ignore 
+    console.log(new_coordinates[mk])
 
     //@ts-ignore
-    const ll = new mapboxgl.LngLat(new_coordinate[0], new_coordinate[1])
+    const ll = new mapboxgl.LngLat(new_coordinates[mk][0], new_coordinates[mk][1])
     //@ts-ignore
     const marker = new mapboxgl.Marker(el)
       .setLngLat(ll)
       .addTo(map);
-
-    MARKER = marker;
+    MARKERS.push(marker);
+  }
 }
 
-function delete_marker(){
-        MARKER.remove()
-        MARKER = undefined
+function delete_markers() {
+  //@ts-ignore
+  for (let marker of MARKERS) {
+    //@ts-ignore
+    marker.remove();
+  }
+  MARKERS = [];
 }
-
-
 
 // setting up mapbox
 //@ts-ignore

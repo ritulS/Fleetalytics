@@ -9,7 +9,7 @@ import cars from "./cars.json";
 // setting up redis connection
 const redisclient = createClient({
   socket: {
-    host: "localhost",
+    host: "redis.cache",
     port: 6379,
   },
   password: "hello",
@@ -30,6 +30,7 @@ async function get_status_from_cache_at_interval() {
       ];
     }
   }
+  console.log(COORDINATE_CACHE)
 }
 
 redisclient.connect();
@@ -101,7 +102,7 @@ app.get(
 app.get("/fleet", (_: Request, res: Response) => {
   const options = {
     port: 8082,
-    host: "localhost",
+    host: "node.analytics",
     method: "GET",
     path: "/fleet",
   };
@@ -122,6 +123,7 @@ app.get("/fleet", (_: Request, res: Response) => {
 
 app.get("/search", (req: Request, res: Response) => {
   const searchTerm: string = req.query.q as string;
+  console.log(searchTerm)
 
   if (searchTerm == "check") {
     res.json({ carList: [] });

@@ -118,7 +118,7 @@ function generate_query_intervals(type: string): string[] {
       }
       intervals.push(convert_to_iso_time_format(st, min_st, cur_seconds));
 
-      count += 1
+      count += 1;
     }
   }
 
@@ -131,61 +131,63 @@ function generate_query_intervals(type: string): string[] {
  *
  *
  */
-async function interval_query_pgserver(
-  vin: string,
-  field: string
-) {
+async function interval_query_pgserver(vin: string, field: string) {
   var query_promises = [];
-  var cur_date = new Date();
-  var year = cur_date.getFullYear();
-  var month = cur_date.getMonth();
-  var date = cur_date.getDate();
 
-  var cur_iso_date = convert_to_iso_date_format(date, month, year);
 
-  // generating the analytics promises - need to be checked
-  if (field == "delta_d"){
-        query_promises.push(pg_client.query(
-    `SELECT vin, SUM(delta_d) AS sum, WHERE date = current_date and vin = ${vin} and time > LOCALTIME(0) - INTERVAL '15 minutes'`
-  ));
+  console.log(vin, field)
+    // generating the analytics promises - need to be checked
+  if (field == "delta_d") {
+    query_promises.push(
+      pg_client.query(
+        `SELECT SUM(delta_d) AS sum from bus_data WHERE vin = '${vin}' and date = current_date and time > LOCALTIME(0) - INTERVAL '15 minutes'`
+      )
+    );
 
-query_promises.push(pg_client.query(
-    `SELECT vin, SUM(delta_d) AS sum, WHERE date = current_date and vin = ${vin} and time > LOCALTIME(0) - INTERVAL '30 minutes'`
-  ));
+    query_promises.push(
+      pg_client.query(
+        `SELECT SUM(delta_d) AS sum from bus_data  WHERE vin = '${vin}' and date = current_date and time > LOCALTIME(0) - INTERVAL '30 minutes'`
+      )
+    );
 
-query_promises.push(pg_client.query(
-    `SELECT vin, SUM(delta_d) AS sum, WHERE date = current_date and vin = ${vin} and time > LOCALTIME(0) - INTERVAL '45 minutes'`
-  ));
-
+    query_promises.push(
+      pg_client.query(
+        `SELECT SUM(delta_d) AS sum from bus_data WHERE vin = '${vin}' and date = current_date and time > LOCALTIME(0) - INTERVAL '45 minutes'`
+      )
+    );
   } else {
-        query_promises.push(pg_client.query(
-    `SELECT vin, AVG(speed) AS sum, WHERE date = current_date and vin = ${vin} and time > LOCALTIME(0) - INTERVAL '15 minutes'`
-  ));
+    query_promises.push(
+      pg_client.query(
+        `SELECT AVG(speed) AS sum from bus_data WHERE vin = '${vin}' and date = current_date and time > LOCALTIME(0) - INTERVAL '15 minutes'`
+      )
+    );
 
-query_promises.push(pg_client.query(
-    `SELECT vin, AVG(speed) AS sum, WHERE date = current_date and vin = ${vin} and time > LOCALTIME(0) - INTERVAL '15 minutes'`
-  ));
+    query_promises.push(
+      pg_client.query(
+        `SELECT AVG(speed) AS sum from bus_data WHERE vin = '${vin}' and date = current_date and time > LOCALTIME(0) - INTERVAL '15 minutes'`
+      )
+    );
 
-query_promises.push(pg_client.query(
-    `SELECT vin, AVG(speed) AS sum, WHERE date = current_date and vin = ${vin} and time > LOCALTIME(0) - INTERVAL '15 minutes'`
-  ));
-
-
+    query_promises.push(
+      pg_client.query(
+        `SELECT AVG(speed) AS sum from bus_data WHERE vin = '${vin}' and date = current_date and time > LOCALTIME(0) - INTERVAL '15 minutes'`
+      )
+    );
   }
-  var query_results = await Promise.all(query_promises); 
+  var query_results = await Promise.all(query_promises);
   const ret_results = {};
 
   // @ts-ignore
-  ret_results["labels"] = ["< 15 mins", "< 30 mins", "< 45 mins"]
+  ret_results["labels"] = ["< 15 mins", "< 30 mins", "< 45 mins"];
 
   var label = field;
   var borderWidth = 1;
   var data = [];
 
   for (let results of query_results) {
-    console.log(results.rows)
+    console.log(results.rows);
     // @ts-ignore
-    data.push(results.rows[0]["avg"]);
+    data.push(results.rows[0]["sum"]);
   }
 
   //@ts-ignore
@@ -209,24 +211,22 @@ function get_bus_type(typeInDB: string): string {
   return "coach";
 }
 
-function get_fuel_used(distance: number, type:string): number {
-
+function get_fuel_used(distance: number, type: string): number {
   // hard coding mileage for each bus type
   // M=15 D=9 E=8 C=13
-  var fuel = 0
-  if (type == "M"){
-    fuel = distance/15
+  var fuel = 0;
+  if (type == "M") {
+    fuel = distance / 15;
   }
-  if (type == "D"){
-    fuel = distance/9
+  if (type == "D") {
+    fuel = distance / 9;
   }
-  if (type == "E"){
-    fuel = distance/8
+  if (type == "E") {
+    fuel = distance / 8;
   }
-  if (type == "C"){
-    fuel = distance/13
+  if (type == "C") {
+    fuel = distance / 13;
   }
-
 
   return fuel;
 }
@@ -237,7 +237,7 @@ function get_fuel_used(distance: number, type:string): number {
  *
  */
 async function fleet_query_pgserver() {
-  //const intervals = generate_query_intervals("hr"); 
+  //const intervals = generate_query_intervals("hr");
   //console.log(intervals)
 
   //const hour_2_interval = intervals[-3];
@@ -252,14 +252,13 @@ async function fleet_query_pgserver() {
   );
 
   console.log(result.rows);
-  var miniBus = {fuel:0, distance:0, number_of_bus:0};
-  var doubleDecker = {fuel:0, distance:0, number_of_bus:0};
-  var coach = {fuel:0, distance:0, number_of_bus:0};
-  var express = {fuel:0, distance:0, number_of_bus:0};
-
+  var miniBus = { fuel: 0, distance: 0, number_of_bus: 0 };
+  var doubleDecker = { fuel: 0, distance: 0, number_of_bus: 0 };
+  var coach = { fuel: 0, distance: 0, number_of_bus: 0 };
+  var express = { fuel: 0, distance: 0, number_of_bus: 0 };
 
   for (let bus of result.rows) {
-    console.log(bus)
+    console.log(bus);
 
     if (get_bus_type((bus as any)["type"].trim()) == "miniBus") {
       miniBus = {
@@ -301,7 +300,7 @@ async function fleet_query_pgserver() {
     express,
   };
 
-  return ret_results
+  return ret_results;
 }
 
 const app: Express = express();
@@ -336,14 +335,12 @@ app.use(express.json());
 
 app.post("/analytics", async (req: Request, res: Response) => {
   try {
-    const type: string = req.body["interval"];
     const field: string = req.body["field"];
     const vin: string = req.body["vin"];
-    var intervals = generate_query_intervals(type);
-    const response = await interval_query_pgserver(vin, intervals, field);
+    const response = await interval_query_pgserver(vin, field);
 
     console.log(response);
-    res.json({ response });
+    res.json(response);
   } catch (e) {
     res.json({ error: { type: (e as Object).toString() } });
   }
@@ -351,7 +348,7 @@ app.post("/analytics", async (req: Request, res: Response) => {
 
 app.get("/fleet", async (_: Request, res: Response) => {
   try {
-    console.log("query received")
+    console.log("query received");
     const response = await fleet_query_pgserver();
     res.json(response);
   } catch (e) {

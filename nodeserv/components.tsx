@@ -15,7 +15,7 @@ interface NavBarProps {
 }
 
 interface carIdInterface {
-  id: string;
+  vin: string;
 }
 
 interface VehicleSearchModalListProps {
@@ -77,7 +77,7 @@ export function AnalyticsQueryModal(props: { updateQueryParams: Function }) {
   const updateQueryParams = (e: React.FormEvent<HTMLButtonElement>) =>
     props.updateQueryParams(queryParams);
 
-  const updateParamVariable = (paramType: "speed" | "distance") =>
+  const updateParamVariable = (paramType: "delta_d" | "speed") =>
     updateQueryParams_({ ...queryParams, param: paramType });
   const updateTimeVariable = (timeType: "1h" | "30m" | "15m") =>
     updateQueryParams_({ ...queryParams, time: timeType });
@@ -134,8 +134,8 @@ export function AnalyticsQueryModal(props: { updateQueryParams: Function }) {
                   name="paramradio"
                   id="paramradio3"
                   autoComplete="off"
-                  onClick={() => updateParamVariable("distance")}
-                  checked={queryParams.param == "distance" ? true : false}
+                  onClick={() => updateParamVariable("delta_d")}
+                  checked={queryParams.param == "delta_d" ? true : false}
                 ></input>
                 <label
                   className="btn btn-outline-primary"
@@ -144,53 +144,7 @@ export function AnalyticsQueryModal(props: { updateQueryParams: Function }) {
                   distance
                 </label>
               </div>
-              <br></br>
-              <div
-                className="btn-group mt-2"
-                role="group"
-                aria-label="Basic radio toggle button group"
-              >
-                <input
-                  type="radio"
-                  className="btn-check"
-                  name="timeradio"
-                  id="timeradio1"
-                  autoComplete="off"
-                  checked={queryParams.time == "1h" ? true : false}
-                  onClick={() => updateTimeVariable("1h")}
-                ></input>
-                <label className="btn btn-outline-primary" htmlFor="timeradio1">
-                  1h
-                </label>
-
-                <input
-                  type="radio"
-                  className="btn-check"
-                  name="timeradio"
-                  id="timeradio2"
-                  autoComplete="off"
-                  checked={queryParams.time == "30m" ? true : false}
-                  onClick={() => updateTimeVariable("30m")}
-                ></input>
-                <label className="btn btn-outline-primary" htmlFor="timeradio2">
-                  day
-                </label>
-
-                <input
-                  type="radio"
-                  className="btn-check"
-                  name="timeradio"
-                  id="timeradio3"
-                  autoComplete="off"
-                  checked={queryParams.time == "15m" ? true : false}
-                  onClick={() => updateTimeVariable("15m")}
-                ></input>
-                <label className="btn btn-outline-primary" htmlFor="timeradio3">
-                  week
-                </label>
-              </div>
-              <br></br>
-
+              <br></br> 
               <div
                 className="btn-group mt-2"
                 role="group"
@@ -271,8 +225,8 @@ function VehicleSearchModalInput(props: { setSearch: Function }) {
 function VehicleSearchModalList(props: VehicleSearchModalListProps) {
   const id_tsx = props.carList.map((value) => {
     return (
-      <div key={value.id} onClick={() => props.getInfo(value.id)}>
-        <p className="p-2 hover:cursor-pointer">{value.id}</p>
+      <div key={value["vin"]} onClick={() => props.getInfo(value["vin"])}>
+        <p className="p-2 hover:cursor-pointer">{value["vin"]}</p>
       </div>
     );
   });
