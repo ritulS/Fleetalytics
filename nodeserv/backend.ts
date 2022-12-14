@@ -20,13 +20,16 @@ var VINS: [any] = (cars as any)["cars"] as [any];
 const COORDINATE_CACHE: any = {};
 
 async function get_status_from_cache_at_interval() {
-  for (let vin of VINS) { 
-     let data = await redisclient.get(vin["id"])
-     if (data != null){
-        data = JSON.parse(data)
-        COORDINATE_CACHE[vin["id"]] = (data as any)["coordinates"] as [number, number]
-     }
+  for (let vin of VINS) {
+    let data = await redisclient.get(vin["id"]);
+    if (data != null) {
+      data = JSON.parse(data);
+      COORDINATE_CACHE[vin["id"]] = (data as any)["coordinates"] as [
+        number,
+        number
+      ];
     }
+  }
 }
 
 redisclient.connect();
@@ -44,7 +47,6 @@ const app: Express = express();
 app.use(express.static("public"));
 
 app.get("/coordinates", async (req: Request, res: Response) => {
-
   const vin: string = req.query.vin as string;
   if (vin == "check") {
     res.json(COORDINATE_CACHE);
