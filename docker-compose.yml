@@ -40,6 +40,8 @@ services:
 
   postgres.db:
     image: postgresdatabase
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
     ports:    # Set up ports exposed for other containers to connect to
       - 5433:5432
     networks:
