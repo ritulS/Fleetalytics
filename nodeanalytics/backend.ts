@@ -21,7 +21,8 @@ const pg_client = new pg.Client({
   host: "postgres.database",
   port: 5432,
   password: "password",
-  user: "log",
+  user: "postgres",
+  database: "db2",
 });
 
 pg_client
