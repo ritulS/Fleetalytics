@@ -147,7 +147,7 @@ async function interval_query_pgserver(
     var endval = intervals[i];
     query_promises.push(
       pg_client.query(
-        `SELECT AVG(${field}) FROM car_data WHERE date = ${cur_iso_date} AND time >= ${stval} AND time < ${endval} AND vin = ${vin}`
+        `SELECT AVG(${field}) FROM bus_data WHERE date = ${cur_iso_date} AND time >= ${stval} AND time < ${endval} AND vin = ${vin}`
       )
     );
   }

@@ -73,8 +73,8 @@ try:
 
     time.sleep(3)
 
-    if batch_num > 1:
-      break
+    # if batch_num > 1:
+    #   break
 
   connection.close()
 

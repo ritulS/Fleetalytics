@@ -6,6 +6,7 @@ from math import radians, cos, sin, asin, sqrt
 from datetime import datetime
 import psycopg2
 import codecs 
+import geopy.distance
 
 ####### DB CONNECTION FOR SERVER IMPLEMENTATION #############
 ## Connecting to DB 2
@@ -17,8 +18,17 @@ import codecs
 
 ####### DB CONNECTION FOR LOCAL TESTING #############
 ## Connecting to DB 2
+# connection = psycopg2.connect(
+#     "dbname='db2' user='postgres' password='postgres' host='localhost'"
+# )
+# print('Connected to DB 2')
+# cursor = connection.cursor()
+
+
+####### DB CONNECTION FOR LOCAL TESTING using container db #############
+## Connecting to DB 2
 connection = psycopg2.connect(
-    "dbname='db2' user='postgres' password='postgres' host='localhost'"
+    "dbname='db2' user='postgres' password='password' host='localhost' port='5439'"
 )
 print('Connected to DB 2')
 cursor = connection.cursor()
@@ -76,8 +86,8 @@ def calculate_distance(cur_data: list) -> int:
     prev_data = get_from_cache(cur_data[3]) #json format from cache
     print(type(prev_data))
     prev_data_dict = prev_data #dict format
-    prev_lat = prev_data_dict['location'][1] # prev latitude
-    prev_long = prev_data_dict['location'][0] # prev longitude
+    prev_lat = prev_data_dict['location'][0] # prev latitude
+    prev_long = prev_data_dict['location'][1] # prev longitude
 
     cur_lat = cur_data[6] # Cur latitude
     cur_long = cur_data[5]# Cur longitude
@@ -91,9 +101,11 @@ def calculate_distance(cur_data: list) -> int:
     
     # Radius of earth in kilometers. Use 3956 for miles
     r = 6371
-      
+    coords_1 = (prev_lat, prev_long)
+    coords_2 = (cur_lat, cur_long)
+    dist = geopy.distance.geodesic(coords_1, coords_2).km
     # calculate the result
-    return int(c * r)
+    return dist
     
 
 ########### Function to add avg_dist and convert to cache format
