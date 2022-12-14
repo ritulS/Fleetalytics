@@ -196,7 +196,25 @@ function get_bus_type(typeInDB: string): string {
 }
 
 function get_fuel_used(distance: number, type:string): number {
-  return 0;
+
+  // hard coding mileage for each bus type
+  // M=15 D=9 E=8 C=13
+  var fuel = 0
+  if (type == "M"){
+    fuel = distance/15
+  }
+  if (type == "D"){
+    fuel = distance/9
+  }
+  if (type == "E"){
+    fuel = distance/8
+  }
+  if (type == "C"){
+    fuel = distance/13
+  }
+
+
+  return fuel;
 }
 
 /**
