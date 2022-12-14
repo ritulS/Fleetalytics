@@ -84,7 +84,7 @@ def calculate_distance(cur_data: list) -> int:
     Output => distance between prev gps and cur gps in KM
     '''
     prev_data = get_from_cache(cur_data[3]) #json format from cache
-    print(type(prev_data))
+    #print(type(prev_data))
     prev_data_dict = prev_data #dict format
     prev_lat = prev_data_dict['location'][0] # prev latitude
     prev_long = prev_data_dict['location'][1] # prev longitude
@@ -114,7 +114,7 @@ def to_cache_format(data:list, avg_dist):
     # list format: Prod format
     # add avg_distance
     template = {
-        'vin': str(data[3]),
+        'vin': str(data[3]).strip(),
         'fuel': 0,
         'speed': data[7],
         'location': [data[6], data[5]],
